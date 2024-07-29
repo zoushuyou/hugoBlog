@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="ShuYou&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="http://localhost:1313//img/tag-bg.jpg">
+    <meta property="twitter:image" content="http://localhost:1313//img/tag-bg.jpg" />
+    
+
+    
+    <meta name="title" content="Mysql相关知识（二）" />
+    <meta property="og:title" content="Mysql相关知识（二）" />
+    <meta property="twitter:title" content="Mysql相关知识（二）" />
+    
+
+    
+    <meta name="description" content="在路上">
+    <meta property="og:description" content="在路上" />
+    <meta property="twitter:description" content="在路上" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="zoushuyou, zoushuyou.github.io">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Mysql相关知识（二） | 书友的博客</title>
+
+    <link rel="canonical" href="/post/mysql/mysql%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E4%BA%8C/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link rel="stylesheet" href="/css/font-awesome.all.min.css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    <script src="/js/lazysizes.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">ShuYou&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/code/">code</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/life/">life</a>
+                        </li>
+                        
+                    
+                    
+		            
+                        <li><a href="/archive//">ARCHIVE</a></li>
+                    
+                        <li><a href="/about//">ABOUT</a></li>
+                    
+		            <li class="search-icon">
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/tag-bg.jpg')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/mysql" title="Mysql">
+                            Mysql
+                        </a>
+                        
+                    </div>
+                    <h1>Mysql相关知识（二）</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                shuyou
+                             
+                            on 
+                            Friday, April 9, 2021
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <blockquote>
+<p>本文介绍Mysql操作和语句相关知识，包括增删改查、建表、函数、过程等相关知识。</p>
+</blockquote>
+<h3 id="1操作">1.操作</h3>
+<p><strong>连接Mysql</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>mysql -h 主机地址 -u 用户名 -p 密码
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>本地连接：
+</span></span><span style="display:flex;"><span>mysql -u root -p
+</span></span></code></pre></div><p><strong>修改密码</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>mysqladmin -u 用户名 -p 旧密码 password 新密码
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>或者
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>alter user `username`@`host` identified by &#39;password&#39;
+</span></span></code></pre></div><p><strong>增加权限</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>grant all privileges on databasename.tablename to 用户名@登录主机 identified by 密码
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>增加一个用户 test1 密码为 abc，让他可以在任何主机上登录，并对所有数据库
+</span></span><span style="display:flex;"><span>有查询、插入、修改、删除的权限：
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>grant select,insert,update,delete on . to `test1`@`localhost` identified by &#34;abc&#34;
+</span></span></code></pre></div><p><strong>删除授权</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>revoke all privileges on  databasename.tablename from `username`@`host`
+</span></span></code></pre></div><p><strong>创建用户</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>create user `username`@`host` identified by &#39;password&#39;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>要求使用ssl登录
+</span></span><span style="display:flex;"><span>create user `username`@`host` identified by &#39;password&#39; require ssl;
+</span></span></code></pre></div><p><strong>锁定用户</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>alter user `username`@`host` account lock;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>解锁
+</span></span><span style="display:flex;"><span>alter user `username`@`host` account unlock;
+</span></span></code></pre></div><p><strong>删除用户</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>drop user `username`@`host`
+</span></span></code></pre></div><h3 id="2常用命令">2.常用命令</h3>
+<p><strong>数据库</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>show databases; <span style="color:#6272a4">#显示数据库</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>create database [if not exists] t [character set=&#39;utf8&#39;]; <span style="color:#6272a4">#建数据库</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>use t; <span style="color:#6272a4">#使用数据库</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>drop database t; <span style="color:#6272a4">#删除数据库</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>show tables; <span style="color:#6272a4">#显示表</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#建表</span>
+</span></span><span style="display:flex;"><span>CREATE TABLE `T` (
+</span></span><span style="display:flex;"><span>  `id` int NOT NULL AUTO_INCREMENT,
+</span></span><span style="display:flex;"><span>  `a` varchar(30) DEFAULT NULL,
+</span></span><span style="display:flex;"><span>  `b` int DEFAULT NULL,
+</span></span><span style="display:flex;"><span>  PRIMARY KEY (`id`),
+</span></span><span style="display:flex;"><span>  UNIQUE KEY `a` (`a`),
+</span></span><span style="display:flex;"><span>  KEY `b` (`b`)
+</span></span><span style="display:flex;"><span>) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#查看建表语句</span>
+</span></span><span style="display:flex;"><span>show create table `T`;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#显示表结构</span>
+</span></span><span style="display:flex;"><span>desc T;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#删除表</span>
+</span></span><span style="display:flex;"><span>drop table [if exists] T;
+</span></span></code></pre></div><p><strong>表复制、备份、清除</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#6272a4">#会造成索引丢失，只有表结构，没有主键等信息。</span>
+</span></span><span style="display:flex;"><span>create table 新表名 select * from T;
+</span></span><span style="display:flex;"><span>或
+</span></span><span style="display:flex;"><span>create table 新表名 as(select * from T);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#讲旧表中的数据移入新表</span>
+</span></span><span style="display:flex;"><span>insert into 新表 select * from T;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#清空表数据</span>
+</span></span><span style="display:flex;"><span>truncate table T;
+</span></span></code></pre></div><p><strong>表相关操作</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#6272a4">#修改列名</span>
+</span></span><span style="display:flex;"><span>alter table T change &lt;原字段名称&gt; &lt;新字段名称 字段类型&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#修改表名</span>
+</span></span><span style="display:flex;"><span>alter table T rename newT
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#修改字段类型及指定是否为空</span>
+</span></span><span style="display:flex;"><span>alter table T modify(or change) &lt;字段名称&gt; &lt;字段类型&gt; [not null]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#增加一个字段</span>
+</span></span><span style="display:flex;"><span>alter table T add column 字段名称 字段类型 (after 某个字段) (first)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#删除字段</span>
+</span></span><span style="display:flex;"><span>alter table &lt;表名称&gt; drop column &lt;列名&gt;;
+</span></span></code></pre></div><p><strong>查表</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>SELECT [DISTINCT] &lt;字段名称,用逗号隔开/*&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>FROM &lt;left_table&gt; [&lt;join_type&gt; JOIN &lt;right_table&gt; ON &lt;连接条件&gt;]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>WHERE &lt;where条件&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>GROUP BY &lt;分组字段&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>HAVING &lt;筛选条件&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ORDER BY &lt;排序条件&gt; [desc/asc]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>LIMIT n[, m]
+</span></span></code></pre></div><p><strong>增改删</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#6272a4">#增加数据</span>
+</span></span><span style="display:flex;"><span>insert into T values();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#更改数据</span>
+</span></span><span style="display:flex;"><span>update T set *** where ** = **
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#删除数据</span>
+</span></span><span style="display:flex;"><span>delete FROM T WHERE ** = **
+</span></span></code></pre></div><p><strong>索引</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#6272a4">#创建索引</span>
+</span></span><span style="display:flex;"><span>-- 普通索引
+</span></span><span style="display:flex;"><span>ALTER TABLE 表名称 ADD INDEX index_name (column_list)
+</span></span><span style="display:flex;"><span>-- 唯一索引
+</span></span><span style="display:flex;"><span>ALTER TABLE 表名称 ADD UNIQUE (column_list)
+</span></span><span style="display:flex;"><span>-- 主键索引
+</span></span><span style="display:flex;"><span>ALTER TABLE 表名称 ADD PRIMARY KEY (column_list)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>或者
+</span></span><span style="display:flex;"><span>CREATE INDEX index_name ON 表名称 (column_list)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#删除索引</span>
+</span></span><span style="display:flex;"><span>DROP INDEX index_name ON 表名称;
+</span></span><span style="display:flex;"><span>ALTER TABLE 表名称 DROP INDEX index_name;
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#删除主键</span>
+</span></span><span style="display:flex;"><span>alter table T drop primary key;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#查看索引</span>
+</span></span><span style="display:flex;"><span>show index from T;
+</span></span><span style="display:flex;"><span>show keys from T;
+</span></span></code></pre></div><p><strong>变量</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#6272a4">#查看满足条件的部分系统变量</span>
+</span></span><span style="display:flex;"><span>show global | session variables like &#39;%char%&#39;;
+</span></span><span style="display:flex;"><span>查看指定的某个系统变量的值
+</span></span><span style="display:flex;"><span>select @@global|session.系统变量名;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#为某个系统变量赋值</span>
+</span></span><span style="display:flex;"><span>set global|session 系统变量名 = 值;
+</span></span><span style="display:flex;"><span>或
+</span></span><span style="display:flex;"><span>set @@global|session.系统变量名 = 值;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#用户变量声明并初始化</span>
+</span></span><span style="display:flex;"><span>set @用户变量名=值
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#使用</span>
+</span></span><span style="display:flex;"><span>select @用户变量名
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#声明局部变量</span>
+</span></span><span style="display:flex;"><span>declare 变量名 类型;
+</span></span><span style="display:flex;"><span>declare 变量名 类型 default 值;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#赋值和使用同用户变量一样</span>
+</span></span></code></pre></div><p><strong>存储过程</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#6272a4">#创建存储过程</span>
+</span></span><span style="display:flex;"><span>create procedure 存储过程名(参数列表)
+</span></span><span style="display:flex;"><span>begin
+</span></span><span style="display:flex;"><span>	方法体(一组合法的sql语句)
+</span></span><span style="display:flex;"><span>end
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#存储过程的结尾可以使用delimiter重新设置</span>
+</span></span><span style="display:flex;"><span>delimiter 结束标志
+</span></span><span style="display:flex;"><span>例：
+</span></span><span style="display:flex;"><span>delimiter $
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#创建过程</span>
+</span></span><span style="display:flex;"><span>delimiter ;;
+</span></span><span style="display:flex;"><span>create procedure idata()
+</span></span><span style="display:flex;"><span>begin
+</span></span><span style="display:flex;"><span>  declare i int;
+</span></span><span style="display:flex;"><span>  set i=1;
+</span></span><span style="display:flex;"><span>  while(i&lt;=100000)do
+</span></span><span style="display:flex;"><span>    insert into t values(i, i, i);
+</span></span><span style="display:flex;"><span>    set i=i+1;
+</span></span><span style="display:flex;"><span>  end while;
+</span></span><span style="display:flex;"><span>end;;
+</span></span><span style="display:flex;"><span>delimiter ;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#调用</span>
+</span></span><span style="display:flex;"><span>call idata();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#查看存储过程</span>
+</span></span><span style="display:flex;"><span>show create procedure 存储过程名;
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#删除存储过程</span>
+</span></span><span style="display:flex;"><span>drop procedure 存储过程名;
+</span></span></code></pre></div><p><strong>函数</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#6272a4">#创建函数</span>
+</span></span><span style="display:flex;"><span>create function 函数名（参数列表）returns 返回类型
+</span></span><span style="display:flex;"><span>begin
+</span></span><span style="display:flex;"><span>函数体
+</span></span><span style="display:flex;"><span>end
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>注意事项：
+</span></span><span style="display:flex;"><span><span style="color:#bd93f9">1.</span>参数列表包含两部分：参数名 参数类型
+</span></span><span style="display:flex;"><span><span style="color:#bd93f9">2.</span>函数体：必须要有return语句，没有回报错。如果return语句没有放在函数体的最后也不报错，但不建议
+</span></span><span style="display:flex;"><span><span style="color:#bd93f9">3.</span>begin end用法与存储过程相同，
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#调用语法</span>
+</span></span><span style="display:flex;"><span>select 函数名（参数列表）
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#例</span>
+</span></span><span style="display:flex;"><span>create function myfunc() returns int
+</span></span><span style="display:flex;"><span>begin
+</span></span><span style="display:flex;"><span>	declare c int default 0;
+</span></span><span style="display:flex;"><span>	select count(*) into c
+</span></span><span style="display:flex;"><span>	from T;
+</span></span><span style="display:flex;"><span>	return c;
+</span></span><span style="display:flex;"><span>end;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>select myfunc();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#查看函数</span>
+</span></span><span style="display:flex;"><span>show create function 函数名;
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">#删除函数</span>
+</span></span><span style="display:flex;"><span>drop function 函数名;
+</span></span></code></pre></div><p><strong>参考</strong>：</p>
+<ol>
+<li><a href="https://blog.csdn.net/zSoaring/article/details/115370995">Mysql-视图、变量、存储过程以及函数</a></li>
+<li><a href="https://www.ucloud.cn/yun/49368.html">Mysql语句大全</a></li>
+</ol>
+
+
+                
+                
+<div class="entry-shang text-center">
+    
+	    <p>「真诚赞赏，手留余香」</p>
+	
+	<button class="zs show-zs btn btn-bred">赞赏支持</button>
+</div>
+<div class="zs-modal-bg"></div>
+<div class="zs-modal-box">
+	<div class="zs-modal-head">
+		<button type="button" class="close">×</button>
+		<span class="author"><a href="http://localhost:1313/"><img src="/img/favicon.png" />ShuYou&#39;s Blog</a></span>
+        
+	        <p class="tip"><i></i><span>真诚赞赏，手留余香</span></p>
+		
+ 
+	</div>
+	<div class="zs-modal-body">
+		<div class="zs-modal-btns">
+			<button class="btn btn-blink" data-num="2">2元</button>
+			<button class="btn btn-blink" data-num="5">5元</button>
+			<button class="btn btn-blink" data-num="10">10元</button>
+			<button class="btn btn-blink" data-num="50">50元</button>
+			<button class="btn btn-blink" data-num="100">100元</button>
+			<button class="btn btn-blink" data-num="1">任意金额</button>
+		</div>
+		<div class="zs-modal-pay">
+			<button class="btn btn-bred" id="pay-text">2元</button>
+			<p>使用<span id="pay-type">微信</span>扫描二维码完成支付</p>
+			<img src="/img/reward/wechat-2.png"  id="pay-image"/>
+		</div>
+	</div>
+	<div class="zs-modal-footer">
+		<label><input type="radio" name="zs-type" value="wechat" class="zs-type" checked="checked"><span ><span class="zs-wechat"><img src="/img/reward/wechat-btn.png"/></span></label>
+		<label><input type="radio" name="zs-type" value="alipay" class="zs-type" class="zs-alipay"><img src="/img/reward/alipay-btn.png"/></span></label>
+	</div>
+</div>
+<script type="text/javascript" src="/js/reward.js"></script>
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/mysql/mysql%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E4%B8%80/" data-toggle="tooltip" data-placement="top" title="Mysql相关知识（一）">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/mysql/mysql%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E4%B8%89%E7%B4%A2%E5%BC%95/" data-toggle="tooltip" data-placement="top" title="Mysql相关知识（三）索引">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+<script src="https://giscus.app/client.js"
+        data-repo="zoushuyou/zoushuyou.github.io"
+        data-repo-id="R_kgDOMG_H3g"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOMG_H3s4Cf_SS"
+        data-mapping="pathname"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-theme="light"
+        data-lang="en"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        <a href="/tags/algorithm" title="algorithm">
+                            algorithm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/blog" title="blog">
+                            blog
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java%E5%B9%B6%E5%8F%91" title="java并发">
+                            java并发
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/java%E9%9B%86%E5%90%88" title="java集合">
+                            java集合
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/mysql" title="mysql">
+                            mysql
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/redis" title="redis">
+                            redis
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring-boot" title="spring boot">
+                            spring boot
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring-cloud" title="spring cloud">
+                            spring cloud
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/tomcat" title="tomcat">
+                            tomcat
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E8%AE%B0%E5%BD%95" title="记录">
+                            记录
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/zoushuyou">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="ShuYou&#39;s Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; ShuYou&#39;s Blog 2024
+                    
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="ShuYou&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="http://localhost:1313//img/tag-bg.jpg">
+    <meta property="twitter:image" content="http://localhost:1313//img/tag-bg.jpg" />
+    
+
+    
+    <meta name="title" content="Disruptor源码分析" />
+    <meta property="og:title" content="Disruptor源码分析" />
+    <meta property="twitter:title" content="Disruptor源码分析" />
+    
+
+    
+    <meta name="description" content="在路上">
+    <meta property="og:description" content="在路上" />
+    <meta property="twitter:description" content="在路上" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="zoushuyou, zoushuyou.github.io">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Disruptor源码分析 | 书友的博客</title>
+
+    <link rel="canonical" href="/post/disruptor/disruptor%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link rel="stylesheet" href="/css/font-awesome.all.min.css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    <script src="/js/lazysizes.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">ShuYou&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/code/">code</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/life/">life</a>
+                        </li>
+                        
+                    
+                    
+		            
+                        <li><a href="/archive//">ARCHIVE</a></li>
+                    
+                        <li><a href="/about//">ABOUT</a></li>
+                    
+		            <li class="search-icon">
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/tag-bg.jpg')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/disruptor" title="Disruptor">
+                            Disruptor
+                        </a>
+                        
+                    </div>
+                    <h1>Disruptor源码分析</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                shuyou
+                             
+                            on 
+                            Wednesday, October 20, 2021
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <blockquote>
+<p>本文简单分析下Disruptor的原理</p>
+</blockquote>
+<h1 id="简介">简介</h1>
+<p>Disruptor是一个高性能队列，它是系统内部的内存队列，而不是Kafka这样的分布式队列。</p>
+<p>由于Java内置的队列，会出现加锁和伪共享等影响性能的问题，所以公司项目里使用了Disruptor框架。</p>
+<p>Disruptor采用生产者-消费者模式，并使用环形数组结构，无锁设计，拥有很高的性能。</p>
+<h1 id="环形数组队列">环形数组队列</h1>
+<p>先介绍下 Disruptor 的环形数组 RingBuffer</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">final</span> <span style="color:#8be9fd">long</span> INITIAL_CURSOR_VALUE <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">-</span>1L;
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd;font-style:italic">final</span> <span style="color:#8be9fd">int</span> indexMask;
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd;font-style:italic">final</span> Object<span style="color:#ff79c6">[]</span> entries;
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd;font-style:italic">final</span> <span style="color:#8be9fd">int</span> bufferSize;
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd;font-style:italic">final</span> Sequencer sequencer;
+</span></span></code></pre></div><p>这是 RingBuffer 类中的变量，比较重要的变量：</p>
+<ul>
+<li>entries     环形数组 生产者生产的类就放在这个数组中</li>
+<li>bufferSize  环形数组的大小</li>
+<li>sequencer   序列号 用于事件发布者和事件处理者在ringbuffer上相互追逐，标记它们的相对位置</li>
+</ul>
+<p><strong>next()</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd">long</span> <span style="color:#50fa7b">next</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">this</span>.<span style="color:#50fa7b">sequencer</span>.<span style="color:#50fa7b">next</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p>返回下一个可用的序列号</p>
+<p><strong>get()</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> E <span style="color:#50fa7b">get</span>(<span style="color:#8be9fd">long</span> sequence) {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">this</span>.<span style="color:#50fa7b">entries</span><span style="color:#ff79c6">[</span>(<span style="color:#8be9fd">int</span>)sequence <span style="color:#ff79c6">&amp;</span> <span style="color:#ff79c6">this</span>.<span style="color:#50fa7b">indexMask</span><span style="color:#ff79c6">]</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p>返回生产者生产的消息，消息对象里面的内容是空的，需要指定值</p>
+<p><strong>publish()</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd">void</span> <span style="color:#50fa7b">publish</span>(<span style="color:#8be9fd">long</span> sequence) {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">this</span>.<span style="color:#50fa7b">sequencer</span>.<span style="color:#50fa7b">publish</span>(sequence);
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p>发布消费者可用序列，只有发布了，消费者才能看见。</p>
+<h1 id="序列">序列</h1>
+<p><strong>Sequence 是 Disruptor 中的序列类，主要用于生成序列号</strong></p>
+<p>在 Sequence 类中，可以看到避免伪共享的相关代码，主要就是 long 类型的，使用了长度为16的 long 类型的数组进行填充，这样可以有效的避免伪共享。</p>
+<p>也采用了CAS相关操作，可以提高性能。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">Sequence</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">final</span> <span style="color:#8be9fd">long</span> INITIAL_VALUE <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">-</span>1L;
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">final</span> Unsafe UNSAFE <span style="color:#ff79c6">=</span> Util.<span style="color:#50fa7b">getUnsafe</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">final</span> <span style="color:#8be9fd">long</span> VALUE_OFFSET;
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd;font-style:italic">final</span> <span style="color:#8be9fd">long</span><span style="color:#ff79c6">[]</span> paddedValue;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#50fa7b">Sequence</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">this</span>(<span style="color:#ff79c6">-</span>1L);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#50fa7b">Sequence</span>(<span style="color:#8be9fd">long</span> initialValue) {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">this</span>.<span style="color:#50fa7b">paddedValue</span> <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> <span style="color:#8be9fd">long</span><span style="color:#ff79c6">[</span>15<span style="color:#ff79c6">]</span>;
+</span></span><span style="display:flex;"><span>        UNSAFE.<span style="color:#50fa7b">putOrderedLong</span>(<span style="color:#ff79c6">this</span>.<span style="color:#50fa7b">paddedValue</span>, VALUE_OFFSET, initialValue);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd">long</span> <span style="color:#50fa7b">get</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> UNSAFE.<span style="color:#50fa7b">getLongVolatile</span>(<span style="color:#ff79c6">this</span>.<span style="color:#50fa7b">paddedValue</span>, VALUE_OFFSET);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd">void</span> <span style="color:#50fa7b">set</span>(<span style="color:#8be9fd">long</span> value) {
+</span></span><span style="display:flex;"><span>        UNSAFE.<span style="color:#50fa7b">putOrderedLong</span>(<span style="color:#ff79c6">this</span>.<span style="color:#50fa7b">paddedValue</span>, VALUE_OFFSET, value);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd">void</span> <span style="color:#50fa7b">setVolatile</span>(<span style="color:#8be9fd">long</span> value) {
+</span></span><span style="display:flex;"><span>        UNSAFE.<span style="color:#50fa7b">putLongVolatile</span>(<span style="color:#ff79c6">this</span>.<span style="color:#50fa7b">paddedValue</span>, VALUE_OFFSET, value);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd">boolean</span> <span style="color:#50fa7b">compareAndSet</span>(<span style="color:#8be9fd">long</span> expectedValue, <span style="color:#8be9fd">long</span> newValue) {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> UNSAFE.<span style="color:#50fa7b">compareAndSwapLong</span>(<span style="color:#ff79c6">this</span>.<span style="color:#50fa7b">paddedValue</span>, VALUE_OFFSET, expectedValue, newValue);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd">long</span> <span style="color:#50fa7b">incrementAndGet</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">this</span>.<span style="color:#50fa7b">addAndGet</span>(1L);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd">long</span> <span style="color:#50fa7b">addAndGet</span>(<span style="color:#8be9fd">long</span> increment) {
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd">long</span> currentValue;
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd">long</span> newValue;
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">do</span> {
+</span></span><span style="display:flex;"><span>            currentValue <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">this</span>.<span style="color:#50fa7b">get</span>();
+</span></span><span style="display:flex;"><span>            newValue <span style="color:#ff79c6">=</span> currentValue <span style="color:#ff79c6">+</span> increment;
+</span></span><span style="display:flex;"><span>        } <span style="color:#ff79c6">while</span>(<span style="color:#ff79c6">!</span><span style="color:#ff79c6">this</span>.<span style="color:#50fa7b">compareAndSet</span>(currentValue, newValue));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> newValue;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> String <span style="color:#50fa7b">toString</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> Long.<span style="color:#50fa7b">toString</span>(<span style="color:#ff79c6">this</span>.<span style="color:#50fa7b">get</span>());
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">static</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd">int</span> base <span style="color:#ff79c6">=</span> UNSAFE.<span style="color:#50fa7b">arrayBaseOffset</span>(<span style="color:#8be9fd">long</span><span style="color:#ff79c6">[]</span>.<span style="color:#50fa7b">class</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd">int</span> scale <span style="color:#ff79c6">=</span> UNSAFE.<span style="color:#50fa7b">arrayIndexScale</span>(<span style="color:#8be9fd">long</span><span style="color:#ff79c6">[]</span>.<span style="color:#50fa7b">class</span>);
+</span></span><span style="display:flex;"><span>        VALUE_OFFSET <span style="color:#ff79c6">=</span> (<span style="color:#8be9fd">long</span>)(base <span style="color:#ff79c6">+</span> scale <span style="color:#ff79c6">*</span> 7);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>Sequencer 接口，它的很多功能是提供给事件发布者使用的。SequenceBarrier 是给事件处理者使用的。</strong></p>
+<p><strong>next()</strong></p>
+<p>采用自旋CAS的方式，获取下一个序列。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd">long</span> <span style="color:#50fa7b">next</span>(<span style="color:#8be9fd">int</span> n) {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">if</span> (n <span style="color:#ff79c6">&lt;</span> 1) {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">throw</span> <span style="color:#ff79c6">new</span> IllegalArgumentException(<span style="color:#f1fa8c">&#34;n must be &gt; 0&#34;</span>);
+</span></span><span style="display:flex;"><span>        } <span style="color:#ff79c6">else</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd">long</span> current;
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd">long</span> next;
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">do</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">while</span>(<span style="color:#ff79c6">true</span>) {
+</span></span><span style="display:flex;"><span>                    current <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">this</span>.<span style="color:#50fa7b">cursor</span>.<span style="color:#50fa7b">get</span>();
+</span></span><span style="display:flex;"><span>                    next <span style="color:#ff79c6">=</span> current <span style="color:#ff79c6">+</span> (<span style="color:#8be9fd">long</span>)n;
+</span></span><span style="display:flex;"><span>                    <span style="color:#8be9fd">long</span> wrapPoint <span style="color:#ff79c6">=</span> next <span style="color:#ff79c6">-</span> (<span style="color:#8be9fd">long</span>)<span style="color:#ff79c6">this</span>.<span style="color:#50fa7b">bufferSize</span>;
+</span></span><span style="display:flex;"><span>                    <span style="color:#8be9fd">long</span> cachedGatingSequence <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">this</span>.<span style="color:#50fa7b">gatingSequenceCache</span>.<span style="color:#50fa7b">get</span>();
+</span></span><span style="display:flex;"><span>                    <span style="color:#ff79c6">if</span> (wrapPoint <span style="color:#ff79c6">&lt;=</span> cachedGatingSequence <span style="color:#ff79c6">&amp;&amp;</span> cachedGatingSequence <span style="color:#ff79c6">&lt;=</span> current) {
+</span></span><span style="display:flex;"><span>                        <span style="color:#ff79c6">break</span>;
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#8be9fd">long</span> gatingSequence <span style="color:#ff79c6">=</span> Util.<span style="color:#50fa7b">getMinimumSequence</span>(<span style="color:#ff79c6">this</span>.<span style="color:#50fa7b">gatingSequences</span>, current);
+</span></span><span style="display:flex;"><span>                    <span style="color:#ff79c6">if</span> (wrapPoint <span style="color:#ff79c6">&gt;</span> gatingSequence) {
+</span></span><span style="display:flex;"><span>                        LockSupport.<span style="color:#50fa7b">parkNanos</span>(1L);
+</span></span><span style="display:flex;"><span>                    } <span style="color:#ff79c6">else</span> {
+</span></span><span style="display:flex;"><span>                        <span style="color:#ff79c6">this</span>.<span style="color:#50fa7b">gatingSequenceCache</span>.<span style="color:#50fa7b">set</span>(gatingSequence);
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            } <span style="color:#ff79c6">while</span>(<span style="color:#ff79c6">!</span><span style="color:#ff79c6">this</span>.<span style="color:#50fa7b">cursor</span>.<span style="color:#50fa7b">compareAndSet</span>(current, next));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">return</span> next;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><h1 id="处理事件">处理事件</h1>
+<p>几个重要的类：</p>
+<ul>
+<li>WorkProcessor：此类是事件处理类，实现了 Runnable 接口</li>
+<li>WorkPool：对处理序列 Sequence 和处理类 WorkProcessor 的封装类</li>
+<li>WorkerPoolInfo：实现了 ConsumerInfo 类，对 WorkerPool 和SequenceBarrier 的封装类</li>
+<li>ConsumerRepository：消费仓库</li>
+</ul>
+<p><strong>处理流程</strong>：</p>
+<ol>
+<li>调用 disruptor.handleEventsWithWorkerPool 初始化 Disruptor 时，会向 consumerRepository 消费仓库中添加 WorkerPoolInfo （包装了WorkerPool （将 ringBuffer 对象传入）和 SequenceBarrier）</li>
+<li>调用 disruptor.start 时，会从consumerRepository 消费仓库中取出 ConsumerInfo 即 WorkerPoolInfo,并调用其 start 方法</li>
+<li>WorkerPoolInfo 的 start 方法 会调用当前 workerPool 的 start 方法，WorkerPool 的 start 方法会使用传进来的线程池去执行 WorkProcessor</li>
+<li>在 WorkProcessor 的 run 方法中会调用 WorkHandler 的 onEvent 方法，即自己定义的消费者类</li>
+</ol>
+<p><strong>参考：</strong></p>
+<ol>
+<li><a href="https://www.iteye.com/blog/brokendreams-2255720">disruptor-3.3.2源码解析汇总</a></li>
+<li><a href="https://tech.meituan.com/2016/11/18/disruptor.html">高性能队列——Disruptor</a></li>
+<li><a href="https://github.com/zq2599/blog_demos/tree/master/disruptor-tutorials">Disruptor使用代码案例</a></li>
+</ol>
+
+
+                
+                
+<div class="entry-shang text-center">
+    
+	    <p>「真诚赞赏，手留余香」</p>
+	
+	<button class="zs show-zs btn btn-bred">赞赏支持</button>
+</div>
+<div class="zs-modal-bg"></div>
+<div class="zs-modal-box">
+	<div class="zs-modal-head">
+		<button type="button" class="close">×</button>
+		<span class="author"><a href="http://localhost:1313/"><img src="/img/favicon.png" />ShuYou&#39;s Blog</a></span>
+        
+	        <p class="tip"><i></i><span>真诚赞赏，手留余香</span></p>
+		
+ 
+	</div>
+	<div class="zs-modal-body">
+		<div class="zs-modal-btns">
+			<button class="btn btn-blink" data-num="2">2元</button>
+			<button class="btn btn-blink" data-num="5">5元</button>
+			<button class="btn btn-blink" data-num="10">10元</button>
+			<button class="btn btn-blink" data-num="50">50元</button>
+			<button class="btn btn-blink" data-num="100">100元</button>
+			<button class="btn btn-blink" data-num="1">任意金额</button>
+		</div>
+		<div class="zs-modal-pay">
+			<button class="btn btn-bred" id="pay-text">2元</button>
+			<p>使用<span id="pay-type">微信</span>扫描二维码完成支付</p>
+			<img src="/img/reward/wechat-2.png"  id="pay-image"/>
+		</div>
+	</div>
+	<div class="zs-modal-footer">
+		<label><input type="radio" name="zs-type" value="wechat" class="zs-type" checked="checked"><span ><span class="zs-wechat"><img src="/img/reward/wechat-btn.png"/></span></label>
+		<label><input type="radio" name="zs-type" value="alipay" class="zs-type" class="zs-alipay"><img src="/img/reward/alipay-btn.png"/></span></label>
+	</div>
+</div>
+<script type="text/javascript" src="/js/reward.js"></script>
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/spring-cloud/openfeign%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8/" data-toggle="tooltip" data-placement="top" title="OpenFeign服务调用">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/tomcat/tomcat%E6%8A%A5%E9%94%99%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" data-toggle="tooltip" data-placement="top" title="Tomcat报错及解决方案">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+<script src="https://giscus.app/client.js"
+        data-repo="zoushuyou/zoushuyou.github.io"
+        data-repo-id="R_kgDOMG_H3g"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOMG_H3s4Cf_SS"
+        data-mapping="pathname"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-theme="light"
+        data-lang="en"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        <a href="/tags/algorithm" title="algorithm">
+                            algorithm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/blog" title="blog">
+                            blog
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java%E5%B9%B6%E5%8F%91" title="java并发">
+                            java并发
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/java%E9%9B%86%E5%90%88" title="java集合">
+                            java集合
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/mysql" title="mysql">
+                            mysql
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/redis" title="redis">
+                            redis
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring-boot" title="spring boot">
+                            spring boot
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring-cloud" title="spring cloud">
+                            spring cloud
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/tomcat" title="tomcat">
+                            tomcat
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E8%AE%B0%E5%BD%95" title="记录">
+                            记录
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/zoushuyou">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="ShuYou&#39;s Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; ShuYou&#39;s Blog 2024
+                    
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

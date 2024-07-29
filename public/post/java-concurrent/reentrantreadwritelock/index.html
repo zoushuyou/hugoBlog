@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="ShuYou&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="http://localhost:1313//img/tag-bg.jpg">
+    <meta property="twitter:image" content="http://localhost:1313//img/tag-bg.jpg" />
+    
+
+    
+    <meta name="title" content="深入了解ReentrantReadWriteLock" />
+    <meta property="og:title" content="深入了解ReentrantReadWriteLock" />
+    <meta property="twitter:title" content="深入了解ReentrantReadWriteLock" />
+    
+
+    
+    <meta name="description" content="在路上">
+    <meta property="og:description" content="在路上" />
+    <meta property="twitter:description" content="在路上" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="zoushuyou, zoushuyou.github.io">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>深入了解ReentrantReadWriteLock | 书友的博客</title>
+
+    <link rel="canonical" href="/post/java-concurrent/reentrantreadwritelock/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link rel="stylesheet" href="/css/font-awesome.all.min.css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    <script src="/js/lazysizes.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">ShuYou&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/code/">code</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/life/">life</a>
+                        </li>
+                        
+                    
+                    
+		            
+                        <li><a href="/archive//">ARCHIVE</a></li>
+                    
+                        <li><a href="/about//">ABOUT</a></li>
+                    
+		            <li class="search-icon">
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/tag-bg.jpg')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/java%E5%B9%B6%E5%8F%91" title="Java并发">
+                            Java并发
+                        </a>
+                        
+                    </div>
+                    <h1>深入了解ReentrantReadWriteLock</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                shuyou
+                             
+                            on 
+                            Wednesday, March 10, 2021
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <blockquote>
+<p>本文分析JDK1.8中的ReentrantReadWriteLock类</p>
+</blockquote>
+<h3 id="简介">简介</h3>
+<p>由于ReentrantLock是独占锁，某时只有一个线程可以获取该锁，而实际中会有写少读多的场景，所以ReentrantReadWriteLock应运而生，采用读写分离的策略，允许多个线程同时获取该锁。</p>
+<p>ReentrantReadWriteLock即可重入读写锁，内部维护一个ReadLock和一个WriteLock，他们依赖Sync来实现，而Sync继承AbstractQueuedSynchronizer，并且也提供了公平和非公平的实现。</p>
+<h3 id="内部类">内部类</h3>
+<p>
+  <img src="https://img-blog.csdnimg.cn/20210309140028298.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0NhcnJvdFpzeQ==,size_16,color_FFFFFF,t_70#pic_center" alt="内部类">
+
+
+<strong>Sync</strong></p>
+<p>抽象类Sync继承自AQS</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">abstract</span> <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">Sync</span> <span style="color:#8be9fd;font-style:italic">extends</span> AbstractQueuedSynchronizer {}
+</span></span></code></pre></div><p>一些属性</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>		<span style="color:#6272a4">//高16位为读锁，低16位为写锁</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">final</span> <span style="color:#8be9fd">int</span> SHARED_SHIFT   <span style="color:#ff79c6">=</span> 16;
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//共享锁读锁 状态单位值65536</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">final</span> <span style="color:#8be9fd">int</span> SHARED_UNIT    <span style="color:#ff79c6">=</span> (1 <span style="color:#ff79c6">&lt;&lt;</span> SHARED_SHIFT);
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//共享锁读锁 最大个数65535</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">final</span> <span style="color:#8be9fd">int</span> MAX_COUNT      <span style="color:#ff79c6">=</span> (1 <span style="color:#ff79c6">&lt;&lt;</span> SHARED_SHIFT) <span style="color:#ff79c6">-</span> 1;
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//排它锁写锁掩码 15个1</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">final</span> <span style="color:#8be9fd">int</span> EXCLUSIVE_MASK <span style="color:#ff79c6">=</span> (1 <span style="color:#ff79c6">&lt;&lt;</span> SHARED_SHIFT) <span style="color:#ff79c6">-</span> 1;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// 返回读锁线程数   c右移 16位</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd">int</span> <span style="color:#50fa7b">sharedCount</span>(<span style="color:#8be9fd">int</span> c)    { <span style="color:#ff79c6">return</span> c <span style="color:#ff79c6">&gt;&gt;&gt;</span> SHARED_SHIFT; }
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//返回写锁可重入个数   c &amp; 15个1</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd">int</span> <span style="color:#50fa7b">exclusiveCount</span>(<span style="color:#8be9fd">int</span> c) { <span style="color:#ff79c6">return</span> c <span style="color:#ff79c6">&amp;</span> EXCLUSIVE_MASK; }
+</span></span><span style="display:flex;"><span>	    <span style="color:#6272a4">//本地线程计数器</span>
+</span></span><span style="display:flex;"><span>	    <span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd;font-style:italic">transient</span> ThreadLocalHoldCounter readHolds;
+</span></span><span style="display:flex;"><span>	    <span style="color:#6272a4">//缓存计数器</span>
+</span></span><span style="display:flex;"><span>	    <span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd;font-style:italic">transient</span> HoldCounter cachedHoldCounter;
+</span></span><span style="display:flex;"><span>	    <span style="color:#6272a4">//第一个读线程</span>
+</span></span><span style="display:flex;"><span>	    <span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd;font-style:italic">transient</span> Thread firstReader <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">null</span>;
+</span></span><span style="display:flex;"><span>	    <span style="color:#6272a4">//第一个读线程的计数</span>
+</span></span><span style="display:flex;"><span>	    <span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd;font-style:italic">transient</span> <span style="color:#8be9fd">int</span> firstReaderHoldCount;
+</span></span></code></pre></div><p>Sync内部类</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>		
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">final</span> <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">HoldCounter</span> {
+</span></span><span style="display:flex;"><span>        	<span style="color:#6272a4">//重入的次数</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd">int</span> count <span style="color:#ff79c6">=</span> 0;
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">//线程id</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">final</span> <span style="color:#8be9fd">long</span> tid <span style="color:#ff79c6">=</span> getThreadId(Thread.<span style="color:#50fa7b">currentThread</span>());
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">final</span> <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">ThreadLocalHoldCounter</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">extends</span> ThreadLocal<span style="color:#ff79c6">&lt;</span>HoldCounter<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// 重写初始化方法，在没有进行set的情况下，获取的都是该HoldCounter值</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">public</span> HoldCounter <span style="color:#50fa7b">initialValue</span>() {
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">new</span> HoldCounter();
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span></code></pre></div><h3 id="锁的获取与释放">锁的获取与释放</h3>
+<p><strong>WriteLock   写锁的获取与释放</strong></p>
+<p><strong>lock</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>	<span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd">void</span> <span style="color:#50fa7b">lock</span>() {
+</span></span><span style="display:flex;"><span>	    sync.<span style="color:#50fa7b">acquire</span>(1);
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">final</span> <span style="color:#8be9fd">void</span> <span style="color:#50fa7b">acquire</span>(<span style="color:#8be9fd">int</span> arg) {
+</span></span><span style="display:flex;"><span>    	<span style="color:#6272a4">//获取锁失败则插入AQS阻塞队列尾部</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>tryAcquire(arg) <span style="color:#ff79c6">&amp;&amp;</span>
+</span></span><span style="display:flex;"><span>            acquireQueued(addWaiter(Node.<span style="color:#50fa7b">EXCLUSIVE</span>), arg))
+</span></span><span style="display:flex;"><span>            selfInterrupt();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">protected</span> <span style="color:#8be9fd;font-style:italic">final</span> <span style="color:#8be9fd">boolean</span> <span style="color:#50fa7b">tryAcquire</span>(<span style="color:#8be9fd">int</span> acquires) {
+</span></span><span style="display:flex;"><span>		<span style="color:#6272a4">//当前线程</span>
+</span></span><span style="display:flex;"><span>        Thread current <span style="color:#ff79c6">=</span> Thread.<span style="color:#50fa7b">currentThread</span>();
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//获取状态值</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd">int</span> c <span style="color:#ff79c6">=</span> getState();
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//获取写线程数量</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd">int</span> w <span style="color:#ff79c6">=</span> exclusiveCount(c);
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//c!=0 说明写锁或者读锁已经被某线程获取</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">if</span> (c <span style="color:#ff79c6">!=</span> 0) {
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">//w=0说明已经有线程获取了读锁返回false，w!=0并且当前线程不是写锁的拥有者，则返回false</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">if</span> (w <span style="color:#ff79c6">==</span> 0 <span style="color:#ff79c6">||</span> current <span style="color:#ff79c6">!=</span> getExclusiveOwnerThread())
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">false</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">//超过最高写线程数量</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">if</span> (w <span style="color:#ff79c6">+</span> exclusiveCount(acquires) <span style="color:#ff79c6">&gt;</span> MAX_COUNT)
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">throw</span> <span style="color:#ff79c6">new</span> Error(<span style="color:#f1fa8c">&#34;Maximum lock count exceeded&#34;</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// 设置AQS状态</span>
+</span></span><span style="display:flex;"><span>            setState(c <span style="color:#ff79c6">+</span> acquires);
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">true</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//c == 0 说明目前没有线程获取到读锁和写锁，非公平锁则线程抢占式执行CAS尝试获取写锁</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">if</span> (writerShouldBlock() <span style="color:#ff79c6">||</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">!</span>compareAndSetState(c, c <span style="color:#ff79c6">+</span> acquires))
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">false</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// 设置独占线程</span>
+</span></span><span style="display:flex;"><span>        setExclusiveOwnerThread(current);
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">true</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p>首先会获取state，判断是否为0，若为0，表示此时没有读锁线程，再判断写线程是否应该被阻塞，而在非公平策略下线程抢占式执行CAS尝试获取写锁，在公平策略下会进行判断(判断同步队列中是否有等待时间更长的线程，若存在，则需要被阻塞，否则，无需阻塞)，之后在设置状态state，然后返回true。若state不为0，则表示此时存在读锁或写锁线程，若写锁线程数量为0或者当前线程为独占锁线程，则返回false，表示不成功，否则，判断写锁线程的重入次数是否大于了最大值，若是，则抛出异常，否则，设置状态state，返回true，表示成功。
+
+  <img src="https://img-blog.csdnimg.cn/2021030914442224.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0NhcnJvdFpzeQ==,size_16,color_FFFFFF,t_70#pic_center" alt="流程图">
+
+
+<strong>lockInterruptibly</strong>
+会对中断进行响应，也就是当其他线程调用了该线程的interrupt()方法中断了当前线程，当前线程会抛出异常InterruptedException。</p>
+<p><strong>unlock</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>	<span style="color:#6272a4">//释放写锁</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd">void</span> <span style="color:#50fa7b">unlock</span>() {
+</span></span><span style="display:flex;"><span>        sync.<span style="color:#50fa7b">release</span>(1);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>	
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">final</span> <span style="color:#8be9fd">boolean</span> <span style="color:#50fa7b">release</span>(<span style="color:#8be9fd">int</span> arg) {
+</span></span><span style="display:flex;"><span>    	<span style="color:#6272a4">//释放锁成功，取AQS阻塞队列的头节点，并激活</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#ff79c6">if</span> (tryRelease(arg)) {
+</span></span><span style="display:flex;"><span>		   	Node h <span style="color:#ff79c6">=</span> head;
+</span></span><span style="display:flex;"><span>		   	<span style="color:#ff79c6">if</span> (h <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">null</span> <span style="color:#ff79c6">&amp;&amp;</span> h.<span style="color:#50fa7b">waitStatus</span> <span style="color:#ff79c6">!=</span> 0)
+</span></span><span style="display:flex;"><span>		       	unparkSuccessor(h);
+</span></span><span style="display:flex;"><span>		   	<span style="color:#ff79c6">return</span> <span style="color:#ff79c6">true</span>;
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>		<span style="color:#ff79c6">return</span> <span style="color:#ff79c6">false</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>	<span style="color:#8be9fd;font-style:italic">protected</span> <span style="color:#8be9fd;font-style:italic">final</span> <span style="color:#8be9fd">boolean</span> <span style="color:#50fa7b">tryRelease</span>(<span style="color:#8be9fd">int</span> releases) {
+</span></span><span style="display:flex;"><span>		<span style="color:#6272a4">//是否是写锁拥有者调用的unlock</span>
+</span></span><span style="display:flex;"><span>	     <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>isHeldExclusively())
+</span></span><span style="display:flex;"><span>	         <span style="color:#ff79c6">throw</span> <span style="color:#ff79c6">new</span> IllegalMonitorStateException();
+</span></span><span style="display:flex;"><span>	     <span style="color:#6272a4">//释放写锁后的 写锁的数量</span>
+</span></span><span style="display:flex;"><span>	     <span style="color:#8be9fd">int</span> nextc <span style="color:#ff79c6">=</span> getState() <span style="color:#ff79c6">-</span> releases;
+</span></span><span style="display:flex;"><span>	     <span style="color:#8be9fd">boolean</span> free <span style="color:#ff79c6">=</span> exclusiveCount(nextc) <span style="color:#ff79c6">==</span> 0;
+</span></span><span style="display:flex;"><span>	     <span style="color:#6272a4">//写锁数量为0 则释放锁</span>
+</span></span><span style="display:flex;"><span>	     <span style="color:#ff79c6">if</span> (free)
+</span></span><span style="display:flex;"><span>	         setExclusiveOwnerThread(<span style="color:#ff79c6">null</span>);
+</span></span><span style="display:flex;"><span>	     <span style="color:#6272a4">//更新状态值</span>
+</span></span><span style="display:flex;"><span>	     setState(nextc);
+</span></span><span style="display:flex;"><span>	     <span style="color:#ff79c6">return</span> free;
+</span></span><span style="display:flex;"><span>	 }
+</span></span></code></pre></div><p>首先会判断该线程是否为独占线程，若不为独占线程，则抛出异常，否则，计算释放资源后的写锁的数量，若为0，表示成功释放，资源不将被占用，否则，表示资源还被占用。其函数流程图如下。</p>
+<p><strong>ReadLock   读锁的获取与释放</strong>
+<strong>lock</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd">void</span> <span style="color:#50fa7b">lock</span>() {
+</span></span><span style="display:flex;"><span>        sync.<span style="color:#50fa7b">acquireShared</span>(1);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">final</span> <span style="color:#8be9fd">void</span> <span style="color:#50fa7b">acquireShared</span>(<span style="color:#8be9fd">int</span> arg) {
+</span></span><span style="display:flex;"><span>    	<span style="color:#6272a4">//获取锁，如果返回值&lt;0说明失败了</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">if</span> (tryAcquireShared(arg) <span style="color:#ff79c6">&lt;</span> 0)
+</span></span><span style="display:flex;"><span>        	<span style="color:#6272a4">//加入队列 自旋去获取锁</span>
+</span></span><span style="display:flex;"><span>            doAcquireShared(arg);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">protected</span> <span style="color:#8be9fd;font-style:italic">final</span> <span style="color:#8be9fd">int</span> <span style="color:#50fa7b">tryAcquireShared</span>(<span style="color:#8be9fd">int</span> unused) {
+</span></span><span style="display:flex;"><span>		<span style="color:#6272a4">//获取当前线程</span>
+</span></span><span style="display:flex;"><span>        Thread current <span style="color:#ff79c6">=</span> Thread.<span style="color:#50fa7b">currentThread</span>();
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//获取状态</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd">int</span> c <span style="color:#ff79c6">=</span> getState();
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//有写锁占用并且不是当前线程，则直接返回获取失败</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">if</span> (exclusiveCount(c) <span style="color:#ff79c6">!=</span> 0 <span style="color:#ff79c6">&amp;&amp;</span>
+</span></span><span style="display:flex;"><span>            getExclusiveOwnerThread() <span style="color:#ff79c6">!=</span> current)
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">-</span>1;
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//获取读锁的线程数</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd">int</span> r <span style="color:#ff79c6">=</span> sharedCount(c);
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// 读线程是否应该被阻塞、并且小于最大值、并且比较设置成功</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>readerShouldBlock() <span style="color:#ff79c6">&amp;&amp;</span>
+</span></span><span style="display:flex;"><span>            r <span style="color:#ff79c6">&lt;</span> MAX_COUNT <span style="color:#ff79c6">&amp;&amp;</span>
+</span></span><span style="display:flex;"><span>            compareAndSetState(c, c <span style="color:#ff79c6">+</span> SHARED_UNIT)) {
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// 如果读锁持有数为0，则说明当前线程是第一个reader，分别给firstReader和firstReaderHoldCount初始化</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">if</span> (r <span style="color:#ff79c6">==</span> 0) {
+</span></span><span style="display:flex;"><span>                firstReader <span style="color:#ff79c6">=</span> current;
+</span></span><span style="display:flex;"><span>                firstReaderHoldCount <span style="color:#ff79c6">=</span> 1;
+</span></span><span style="display:flex;"><span>            } <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> (firstReader <span style="color:#ff79c6">==</span> current) {<span style="color:#6272a4">// 如果读锁持有数不为0且当前线程就是firstReader，那么直接给firstReaderHoldCount+1，表示读锁重入</span>
+</span></span><span style="display:flex;"><span>                firstReaderHoldCount<span style="color:#ff79c6">++</span>;
+</span></span><span style="display:flex;"><span>            } <span style="color:#ff79c6">else</span> {<span style="color:#6272a4">// 读锁数量不为0并且不为当前线程</span>
+</span></span><span style="display:flex;"><span>                HoldCounter rh <span style="color:#ff79c6">=</span> cachedHoldCounter;
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">if</span> (rh <span style="color:#ff79c6">==</span> <span style="color:#ff79c6">null</span> <span style="color:#ff79c6">||</span> rh.<span style="color:#50fa7b">tid</span> <span style="color:#ff79c6">!=</span> getThreadId(current))
+</span></span><span style="display:flex;"><span>                    cachedHoldCounter <span style="color:#ff79c6">=</span> rh <span style="color:#ff79c6">=</span> readHolds.<span style="color:#50fa7b">get</span>();
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> (rh.<span style="color:#50fa7b">count</span> <span style="color:#ff79c6">==</span> 0)
+</span></span><span style="display:flex;"><span>                    readHolds.<span style="color:#50fa7b">set</span>(rh);
+</span></span><span style="display:flex;"><span>                rh.<span style="color:#50fa7b">count</span><span style="color:#ff79c6">++</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">return</span> 1;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// 应该阻塞或者CAS失败则进入此方法获取锁</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> fullTryAcquireShared(current);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd">void</span> <span style="color:#50fa7b">doAcquireShared</span>(<span style="color:#8be9fd">int</span> arg) {
+</span></span><span style="display:flex;"><span>    	<span style="color:#6272a4">//将节点挂在到队列 并设置其为尾结点</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">final</span> Node node <span style="color:#ff79c6">=</span> addWaiter(Node.<span style="color:#50fa7b">SHARED</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd">boolean</span> failed <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">true</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">try</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd">boolean</span> interrupted <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">false</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">for</span> (;;) {
+</span></span><span style="display:flex;"><span>            	<span style="color:#6272a4">//p是node的前节点</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#8be9fd;font-style:italic">final</span> Node p <span style="color:#ff79c6">=</span> node.<span style="color:#50fa7b">predecessor</span>();
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">if</span> (p <span style="color:#ff79c6">==</span> head) {
+</span></span><span style="display:flex;"><span>                	<span style="color:#6272a4">// 如果前一个节点是头节点，则尝试获取锁</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#8be9fd">int</span> r <span style="color:#ff79c6">=</span> tryAcquireShared(arg);
+</span></span><span style="display:flex;"><span>                    <span style="color:#ff79c6">if</span> (r <span style="color:#ff79c6">&gt;=</span> 0) {<span style="color:#6272a4">//获取锁成功</span>
+</span></span><span style="display:flex;"><span>                        setHeadAndPropagate(node, r);<span style="color:#6272a4">//设置头节点</span>
+</span></span><span style="display:flex;"><span>                        p.<span style="color:#50fa7b">next</span> <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">null</span>; <span style="color:#6272a4">// help GC</span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#ff79c6">if</span> (interrupted)
+</span></span><span style="display:flex;"><span>                            selfInterrupt();
+</span></span><span style="display:flex;"><span>                        failed <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">false</span>;
+</span></span><span style="display:flex;"><span>                        <span style="color:#ff79c6">return</span>;
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">if</span> (shouldParkAfterFailedAcquire(p, node) <span style="color:#ff79c6">&amp;&amp;</span>
+</span></span><span style="display:flex;"><span>                    parkAndCheckInterrupt())
+</span></span><span style="display:flex;"><span>                    interrupted <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">true</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        } <span style="color:#ff79c6">finally</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">if</span> (failed)
+</span></span><span style="display:flex;"><span>                cancelAcquire(node);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p>
+  <img src="https://img-blog.csdnimg.cn/20210310152508189.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0NhcnJvdFpzeQ==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述">
+
+
+<strong>unlock</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd">void</span> <span style="color:#50fa7b">unlock</span>() {
+</span></span><span style="display:flex;"><span>        sync.<span style="color:#50fa7b">releaseShared</span>(1);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">final</span> <span style="color:#8be9fd">boolean</span> <span style="color:#50fa7b">releaseShared</span>(<span style="color:#8be9fd">int</span> arg) {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">if</span> (tryReleaseShared(arg)) {
+</span></span><span style="display:flex;"><span>            doReleaseShared();
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">true</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">false</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">protected</span> <span style="color:#8be9fd;font-style:italic">final</span> <span style="color:#8be9fd">boolean</span> <span style="color:#50fa7b">tryReleaseShared</span>(<span style="color:#8be9fd">int</span> unused) {
+</span></span><span style="display:flex;"><span>    	<span style="color:#6272a4">//当前线程</span>
+</span></span><span style="display:flex;"><span>        Thread current <span style="color:#ff79c6">=</span> Thread.<span style="color:#50fa7b">currentThread</span>();
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//当前线程是否为第一个读线程</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">if</span> (firstReader <span style="color:#ff79c6">==</span> current) {
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// assert firstReaderHoldCount &gt; 0;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">//重入数为1 则置空</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">if</span> (firstReaderHoldCount <span style="color:#ff79c6">==</span> 1)
+</span></span><span style="display:flex;"><span>                firstReader <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">null</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">//可重入数-1</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">else</span>
+</span></span><span style="display:flex;"><span>                firstReaderHoldCount<span style="color:#ff79c6">--</span>;
+</span></span><span style="display:flex;"><span>        } <span style="color:#ff79c6">else</span> {
+</span></span><span style="display:flex;"><span>        	<span style="color:#6272a4">//得到缓存的计算</span>
+</span></span><span style="display:flex;"><span>            HoldCounter rh <span style="color:#ff79c6">=</span> cachedHoldCounter;
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">if</span> (rh <span style="color:#ff79c6">==</span> <span style="color:#ff79c6">null</span> <span style="color:#ff79c6">||</span> rh.<span style="color:#50fa7b">tid</span> <span style="color:#ff79c6">!=</span> getThreadId(current))
+</span></span><span style="display:flex;"><span>	            <span style="color:#6272a4">// 获取当前线程对应的计数器</span>
+</span></span><span style="display:flex;"><span>                rh <span style="color:#ff79c6">=</span> readHolds.<span style="color:#50fa7b">get</span>();
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// 获取计数</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd">int</span> count <span style="color:#ff79c6">=</span> rh.<span style="color:#50fa7b">count</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">if</span> (count <span style="color:#ff79c6">&lt;=</span> 1) {
+</span></span><span style="display:flex;"><span>                readHolds.<span style="color:#50fa7b">remove</span>();
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">if</span> (count <span style="color:#ff79c6">&lt;=</span> 0)
+</span></span><span style="display:flex;"><span>                    <span style="color:#ff79c6">throw</span> unmatchedUnlockException();
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">//计数-1</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">--</span>rh.<span style="color:#50fa7b">count</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">for</span> (;;) {
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd">int</span> c <span style="color:#ff79c6">=</span> getState();
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// 获取释放后状态</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd">int</span> nextc <span style="color:#ff79c6">=</span> c <span style="color:#ff79c6">-</span> SHARED_UNIT;
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">if</span> (compareAndSetState(c, nextc)) <span style="color:#6272a4">//CAS自旋设置</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">return</span> nextc <span style="color:#ff79c6">==</span> 0;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd">void</span> <span style="color:#50fa7b">doReleaseShared</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">for</span> (;;) { <span style="color:#6272a4">//自旋激活等待节点</span>
+</span></span><span style="display:flex;"><span>            Node h <span style="color:#ff79c6">=</span> head;
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">if</span> (h <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">null</span> <span style="color:#ff79c6">&amp;&amp;</span> h <span style="color:#ff79c6">!=</span> tail) {
+</span></span><span style="display:flex;"><span>                <span style="color:#8be9fd">int</span> ws <span style="color:#ff79c6">=</span> h.<span style="color:#50fa7b">waitStatus</span>;
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">if</span> (ws <span style="color:#ff79c6">==</span> Node.<span style="color:#50fa7b">SIGNAL</span>) {
+</span></span><span style="display:flex;"><span>                    <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>compareAndSetWaitStatus(h, Node.<span style="color:#50fa7b">SIGNAL</span>, 0))
+</span></span><span style="display:flex;"><span>                        <span style="color:#ff79c6">continue</span>;            <span style="color:#6272a4">// loop to recheck cases</span>
+</span></span><span style="display:flex;"><span>                    unparkSuccessor(h);
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">else</span> <span style="color:#ff79c6">if</span> (ws <span style="color:#ff79c6">==</span> 0 <span style="color:#ff79c6">&amp;&amp;</span>
+</span></span><span style="display:flex;"><span>                         <span style="color:#ff79c6">!</span>compareAndSetWaitStatus(h, 0, Node.<span style="color:#50fa7b">PROPAGATE</span>))
+</span></span><span style="display:flex;"><span>                    <span style="color:#ff79c6">continue</span>;                <span style="color:#6272a4">// loop on failed CAS</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">if</span> (h <span style="color:#ff79c6">==</span> head)                   <span style="color:#6272a4">// loop if head changed</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">break</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><h3 id="reentrantreadwritelock的使用">ReentrantReadWriteLock的使用</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#ff79c6">package</span> thread3;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> java.util.ArrayList;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> java.util.concurrent.ThreadLocalRandom;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> java.util.concurrent.locks.Lock;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> java.util.concurrent.locks.ReentrantReadWriteLock;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> * @author zousy
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> * @version v1.0
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> * @Description
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> * @date 2021-03-09 14:55
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">ReentrantReadWriteLockList</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">private</span> ArrayList<span style="color:#ff79c6">&lt;</span>String<span style="color:#ff79c6">&gt;</span> array <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> ArrayList<span style="color:#ff79c6">&lt;&gt;</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd;font-style:italic">final</span> ReentrantReadWriteLock lock <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> ReentrantReadWriteLock();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd;font-style:italic">final</span> Lock readLock <span style="color:#ff79c6">=</span> lock.<span style="color:#50fa7b">readLock</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd;font-style:italic">final</span> Lock writeLock <span style="color:#ff79c6">=</span> lock.<span style="color:#50fa7b">writeLock</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd">void</span> <span style="color:#50fa7b">add</span>(String e){
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(Thread.<span style="color:#50fa7b">currentThread</span>().<span style="color:#50fa7b">getName</span>() <span style="color:#ff79c6">+</span> <span style="color:#f1fa8c">&#34;  try writeLock  lock    value   &#34;</span><span style="color:#ff79c6">+</span>e);
+</span></span><span style="display:flex;"><span>        writeLock.<span style="color:#50fa7b">lock</span>();
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">try</span> {
+</span></span><span style="display:flex;"><span>            array.<span style="color:#50fa7b">add</span>(e);
+</span></span><span style="display:flex;"><span>        } <span style="color:#ff79c6">catch</span> (Exception exception) {
+</span></span><span style="display:flex;"><span>            exception.<span style="color:#50fa7b">printStackTrace</span>();
+</span></span><span style="display:flex;"><span>        }<span style="color:#ff79c6">finally</span> {
+</span></span><span style="display:flex;"><span>            writeLock.<span style="color:#50fa7b">unlock</span>();
+</span></span><span style="display:flex;"><span>            System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(Thread.<span style="color:#50fa7b">currentThread</span>().<span style="color:#50fa7b">getName</span>() <span style="color:#ff79c6">+</span> <span style="color:#f1fa8c">&#34;  try writeLock  unlock&#34;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> String <span style="color:#50fa7b">get</span>(<span style="color:#8be9fd">int</span> index){
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(Thread.<span style="color:#50fa7b">currentThread</span>().<span style="color:#50fa7b">getName</span>() <span style="color:#ff79c6">+</span> <span style="color:#f1fa8c">&#34;  try readLock lock&#34;</span>);
+</span></span><span style="display:flex;"><span>        readLock.<span style="color:#50fa7b">lock</span>();
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">try</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">return</span> array.<span style="color:#50fa7b">get</span>(index);
+</span></span><span style="display:flex;"><span>        }<span style="color:#ff79c6">catch</span> (Exception e){
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">new</span> String(<span style="color:#f1fa8c">&#34;越界访问&#34;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">finally</span> {
+</span></span><span style="display:flex;"><span>            readLock.<span style="color:#50fa7b">unlock</span>();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd">void</span> <span style="color:#50fa7b">main</span>(String<span style="color:#ff79c6">[]</span> args) {
+</span></span><span style="display:flex;"><span>        ReentrantReadWriteLockList reentrantLockList <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> ReentrantReadWriteLockList();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">for</span> (<span style="color:#8be9fd">int</span> i <span style="color:#ff79c6">=</span> 0; i <span style="color:#ff79c6">&lt;</span> 3; i<span style="color:#ff79c6">++</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> Thread(<span style="color:#ff79c6">new</span> Runnable() {
+</span></span><span style="display:flex;"><span>                @Override
+</span></span><span style="display:flex;"><span>                <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd">void</span> <span style="color:#50fa7b">run</span>() {
+</span></span><span style="display:flex;"><span>                    String s <span style="color:#ff79c6">=</span> String.<span style="color:#50fa7b">valueOf</span>(ThreadLocalRandom.<span style="color:#50fa7b">current</span>().<span style="color:#50fa7b">nextInt</span>(100));
+</span></span><span style="display:flex;"><span>                    reentrantLockList.<span style="color:#50fa7b">add</span>(s);
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }).<span style="color:#50fa7b">start</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">final</span> <span style="color:#8be9fd">int</span> j <span style="color:#ff79c6">=</span> i;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> Thread(<span style="color:#ff79c6">new</span> Runnable() {
+</span></span><span style="display:flex;"><span>                @Override
+</span></span><span style="display:flex;"><span>                <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd">void</span> <span style="color:#50fa7b">run</span>() {
+</span></span><span style="display:flex;"><span>                    System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(Thread.<span style="color:#50fa7b">currentThread</span>().<span style="color:#50fa7b">getName</span>()<span style="color:#ff79c6">+</span> <span style="color:#f1fa8c">&#34;  try readLock  unlock value   &#34;</span> <span style="color:#ff79c6">+</span> reentrantLockList.<span style="color:#50fa7b">get</span>(j));
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }).<span style="color:#50fa7b">start</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> Thread(<span style="color:#ff79c6">new</span> Runnable() {
+</span></span><span style="display:flex;"><span>                @Override
+</span></span><span style="display:flex;"><span>                <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd">void</span> <span style="color:#50fa7b">run</span>() {
+</span></span><span style="display:flex;"><span>                    System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(Thread.<span style="color:#50fa7b">currentThread</span>().<span style="color:#50fa7b">getName</span>()<span style="color:#ff79c6">+</span> <span style="color:#f1fa8c">&#34;  try readLock  unlock value   &#34;</span> <span style="color:#ff79c6">+</span> reentrantLockList.<span style="color:#50fa7b">get</span>(j));
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }).<span style="color:#50fa7b">start</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>运行结果：</strong>
+
+  <img src="https://img-blog.csdnimg.cn/20210310181617979.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0NhcnJvdFpzeQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述">
+
+</p>
+<p><strong>小结</strong></p>
+<ul>
+<li>ReentrantReadWriteLock 有公平和非公平两种机制，默认使用非公平锁。</li>
+<li>在线程持有读锁的情况下，该线程不能取得写锁(因为获取写锁的时候，如果发现当前的读锁被占用，就马上获取失败，不管读锁是不是被当前线程持有)。</li>
+<li>在线程持有写锁的情况下，该线程可以继续获取读锁（获取读锁时如果发现写锁被占用，只有写锁没有被当前线程占用的情况才会获取失败）。</li>
+<li>读锁能同时被多个线程持有，而写锁是独占锁同一时刻只能有一个线程持有。</li>
+<li>锁降级：线程获取写入锁后可以获取读取锁，然后释放写入锁，这样就从写入锁变成了读取锁，从而实现锁降级特性。</li>
+<li>ReentrantReadWriteLock 使用int 类型的变量  高16为表示拥有读锁线程数，低16为表示写锁可重入数。</li>
+</ul>
+<p><strong>参考</strong></p>
+<ol>
+<li><strong>Java并发编程之美</strong></li>
+<li><a href="https://www.cnblogs.com/leesf456/p/5419132.html">JDK1.8源码分析之ReentrantReadWriteLock</a></li>
+<li><a href="https://cloud.tencent.com/developer/article/1469555">读写锁——ReentrantReadWriteLock原理详解</a></li>
+</ol>
+
+
+                
+                
+<div class="entry-shang text-center">
+    
+	    <p>「真诚赞赏，手留余香」</p>
+	
+	<button class="zs show-zs btn btn-bred">赞赏支持</button>
+</div>
+<div class="zs-modal-bg"></div>
+<div class="zs-modal-box">
+	<div class="zs-modal-head">
+		<button type="button" class="close">×</button>
+		<span class="author"><a href="http://localhost:1313/"><img src="/img/favicon.png" />ShuYou&#39;s Blog</a></span>
+        
+	        <p class="tip"><i></i><span>真诚赞赏，手留余香</span></p>
+		
+ 
+	</div>
+	<div class="zs-modal-body">
+		<div class="zs-modal-btns">
+			<button class="btn btn-blink" data-num="2">2元</button>
+			<button class="btn btn-blink" data-num="5">5元</button>
+			<button class="btn btn-blink" data-num="10">10元</button>
+			<button class="btn btn-blink" data-num="50">50元</button>
+			<button class="btn btn-blink" data-num="100">100元</button>
+			<button class="btn btn-blink" data-num="1">任意金额</button>
+		</div>
+		<div class="zs-modal-pay">
+			<button class="btn btn-bred" id="pay-text">2元</button>
+			<p>使用<span id="pay-type">微信</span>扫描二维码完成支付</p>
+			<img src="/img/reward/wechat-2.png"  id="pay-image"/>
+		</div>
+	</div>
+	<div class="zs-modal-footer">
+		<label><input type="radio" name="zs-type" value="wechat" class="zs-type" checked="checked"><span ><span class="zs-wechat"><img src="/img/reward/wechat-btn.png"/></span></label>
+		<label><input type="radio" name="zs-type" value="alipay" class="zs-type" class="zs-alipay"><img src="/img/reward/alipay-btn.png"/></span></label>
+	</div>
+</div>
+<script type="text/javascript" src="/js/reward.js"></script>
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/java-concurrent/java%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80/" data-toggle="tooltip" data-placement="top" title="Java并发基础">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/java-concurrent/java%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1%E5%B7%A5%E5%85%B7%E7%B1%BB%E7%9A%84%E4%BD%BF%E7%94%A8/" data-toggle="tooltip" data-placement="top" title="Java线程通信工具类的使用">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+<script src="https://giscus.app/client.js"
+        data-repo="zoushuyou/zoushuyou.github.io"
+        data-repo-id="R_kgDOMG_H3g"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOMG_H3s4Cf_SS"
+        data-mapping="pathname"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-theme="light"
+        data-lang="en"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        <a href="/tags/algorithm" title="algorithm">
+                            algorithm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/blog" title="blog">
+                            blog
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java%E5%B9%B6%E5%8F%91" title="java并发">
+                            java并发
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/java%E9%9B%86%E5%90%88" title="java集合">
+                            java集合
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/mysql" title="mysql">
+                            mysql
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/redis" title="redis">
+                            redis
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring-boot" title="spring boot">
+                            spring boot
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring-cloud" title="spring cloud">
+                            spring cloud
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/tomcat" title="tomcat">
+                            tomcat
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E8%AE%B0%E5%BD%95" title="记录">
+                            记录
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/zoushuyou">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="ShuYou&#39;s Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; ShuYou&#39;s Blog 2024
+                    
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

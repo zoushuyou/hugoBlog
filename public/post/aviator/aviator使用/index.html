@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="ShuYou&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="http://localhost:1313//img/tag-bg.jpg">
+    <meta property="twitter:image" content="http://localhost:1313//img/tag-bg.jpg" />
+    
+
+    
+    <meta name="title" content="Aviator的初步了解和使用" />
+    <meta property="og:title" content="Aviator的初步了解和使用" />
+    <meta property="twitter:title" content="Aviator的初步了解和使用" />
+    
+
+    
+    <meta name="description" content="在路上">
+    <meta property="og:description" content="在路上" />
+    <meta property="twitter:description" content="在路上" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="zoushuyou, zoushuyou.github.io">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Aviator的初步了解和使用 | 书友的博客</title>
+
+    <link rel="canonical" href="/post/aviator/aviator%E4%BD%BF%E7%94%A8/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link rel="stylesheet" href="/css/font-awesome.all.min.css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    <script src="/js/lazysizes.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">ShuYou&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/code/">code</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/life/">life</a>
+                        </li>
+                        
+                    
+                    
+		            
+                        <li><a href="/archive//">ARCHIVE</a></li>
+                    
+                        <li><a href="/about//">ABOUT</a></li>
+                    
+		            <li class="search-icon">
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/tag-bg.jpg')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                    </div>
+                    <h1>Aviator的初步了解和使用</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                shuyou
+                             
+                            on 
+                            Monday, January 18, 2021
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <blockquote>
+<p>&ldquo;初步了解和使用Aviator&rdquo;</p>
+</blockquote>
+<h2 id="1aviator简介">1.Aviator简介</h2>
+<p>Aviator 是一个高性能，轻量级的java语言实现的<strong>表达式求值引擎</strong>，主要用于各种表达式的动态求值。</p>
+<p><a href="https://www.yuque.com/boyan-avfmj/aviatorscript/ra28g1#f67a50b4">官方文档</a></p>
+<p><a href="https://github.com/killme2008/aviatorscript">github地址</a></p>
+<blockquote>
+<p>支持数字、字符串、正则表达式、布尔值、正则表达式等基本类型，完整支持所有 Java 运算符及优先级等。
+函数是一等公民，支持闭包和函数式编程。
+内置 bigint/decmal 类型用于大整数和高精度运算，支持运算符重载得以让这些类型使用普通的算术运算符 +-*/ 参与运算。
+完整的脚本语法支持，包括多行数据、条件语句、循环语句、词法作用域和异常处理等。
+函数式编程结合 Sequence 抽象，便捷处理任何集合。
+轻量化的模块系统。
+多种方式，方便地调用 Java 方法，完整支持 Java 脚本 API（方便从 Java 调用脚本）。
+丰富的定制选项，可作为安全的语言沙箱和全功能语言使用。
+轻量化，高性能，通过直接将脚本翻译成 JVM 字节码，AviatorScript 的基础性能较好。</p>
+</blockquote>
+<p>使用场景包括：</p>
+<ol>
+<li>规则判断及规则引擎</li>
+<li>公式计算</li>
+<li>动态脚本控制</li>
+<li>集合数据 ELT 等 ……</li>
+</ol>
+<h2 id="2aviator入门常用">2.Aviator入门常用</h2>
+<blockquote>
+<p><strong>这里使用版本为4.2.5</strong></p>
+</blockquote>
+<h4 id="21数据类型">2.1数据类型</h4>
+<ul>
+<li>Number类型: 数字类型,支持四种类型,分别是long,double,java.math.BigInteger(简称 big int)和java.math.BigDecimal(简 称 decimal),规则如下:
+<ul>
+<li>任何以大写字母 N 结尾的整数都被认为是 big int</li>
+<li>任何以大写字母 M 结尾的数字都被认为是 decimal</li>
+<li>其他的任何整数都将被转换为 Long</li>
+<li>其他任何浮点数都将被转换为 Double</li>
+<li>超过 long 范围的整数字面量都将自动转换为 big int 类型</li>
+</ul>
+</li>
+<li>String类型: 字符串类型,单引号或者双引号括起来的文本串,如&rsquo;hello world&rsquo;, 变量如果传入的是String或者Character也将转为String类型</li>
+<li>Bool类型: 常量true和false,表示真值和假值,与 java 的Boolean.TRUE和Boolean.False对应</li>
+<li>Pattern类型: 正则表达式, 以//括起来的字符串,如/\d+/,内部 实现为java.util.Pattern</li>
+<li>变量类型: 与 Java 的变量命名规则相同,变量的值由用户传入</li>
+<li>nil类型: 常量nil,类似 java 中的null,但是nil比较特殊,nil不仅可以参与==、!=的比较, 也可以参与&gt;、&gt;=、&lt;、&lt;=的比较,Aviator 规定任何类型都大于nil除了nil本身,nil==nil返回true。 用户传入的变量值如果为null,那么也将作为nil处理,nil打印为null</li>
+</ul>
+<h4 id="22操作符">2.2操作符</h4>
+<h5 id="算术运算符">算术运算符</h5>
+<p>Aviator 支持常见的算术运算符,包括+ - * / %五个二元运算符,和一元运算符-(负)。其中- * / %和一元的-仅能作用于Number类型。
++不仅能用于Number类型,还可以用于String的相加,或者字符串与其他对象的相加。
+Aviator 规定,任何类型与String相加,结果为String。</p>
+<h5 id="逻辑运算符">逻辑运算符</h5>
+<p>Avaitor 的支持的逻辑运算符包括,一元否定运算符!,以及逻辑与的&amp;&amp;,逻辑或的||。逻辑运算符的操作数只能为Boolean。
+&amp;&amp;和||都执行短路规则。</p>
+<h5 id="关系运算符">关系运算符</h5>
+<p>Aviator 支持的关系运算符包括&lt;, &lt;=, &gt;, &gt;=以及==和!= 。
+关系运算符可以作用于Number之间、String之间、Pattern之间、Boolean之间、变量之间以及其他类型与nil之间的关系比较, 不同类型除了nil之外不能相互比较。</p>
+<h2 id="3一些简单特性">3.一些简单特性</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#ff79c6">package</span> aviator;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> com.googlecode.aviator.AviatorEvaluator;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> com.googlecode.aviator.Expression;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> com.googlecode.aviator.runtime.function.AbstractFunction;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> com.googlecode.aviator.runtime.function.AbstractVariadicFunction;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> com.googlecode.aviator.runtime.function.FunctionUtils;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> com.googlecode.aviator.runtime.type.AviatorDouble;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> com.googlecode.aviator.runtime.type.AviatorObject;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> com.googlecode.aviator.runtime.type.AviatorString;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> java.util.HashMap;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> java.util.Map;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> * @author zousy
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> * @version v1.0
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> * @Description
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> * @date 2021-01-16 15:39
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">App</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd">void</span> <span style="color:#50fa7b">main</span>(String<span style="color:#ff79c6">[]</span> args) {
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//执行表达式 Aviator的数值类型仅支持Long和Double, 任何整数都将转换成Long,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// 任何浮点数都将转换为Double, 包括用户传入的变量数值</span>
+</span></span><span style="display:flex;"><span>        Object execute <span style="color:#ff79c6">=</span> AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;1+1+2&#34;</span>);
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(execute.<span style="color:#50fa7b">toString</span>() <span style="color:#ff79c6">+</span> execute.<span style="color:#50fa7b">getClass</span>().<span style="color:#50fa7b">getSimpleName</span>());
+</span></span><span style="display:flex;"><span>        Object execute1 <span style="color:#ff79c6">=</span> AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;2.3+3.0&#34;</span>);
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(execute1.<span style="color:#50fa7b">toString</span>() <span style="color:#ff79c6">+</span> execute1.<span style="color:#50fa7b">getClass</span>().<span style="color:#50fa7b">getSimpleName</span>());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//内置函数和 多行表达式 使用; 隔开</span>
+</span></span><span style="display:flex;"><span>        Expression compile <span style="color:#ff79c6">=</span> AviatorEvaluator.<span style="color:#50fa7b">getInstance</span>().<span style="color:#50fa7b">compile</span>(<span style="color:#f1fa8c">&#34;println(&#39;Hello, AviatorScript!&#39;); 1+2&#34;</span>);
+</span></span><span style="display:flex;"><span>        Object res <span style="color:#ff79c6">=</span> compile.<span style="color:#50fa7b">execute</span>();
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(res.<span style="color:#50fa7b">toString</span>());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//使用变量</span>
+</span></span><span style="display:flex;"><span>        Map<span style="color:#ff79c6">&lt;</span>String, Object<span style="color:#ff79c6">&gt;</span> env <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> HashMap<span style="color:#ff79c6">&lt;</span>String, Object<span style="color:#ff79c6">&gt;</span>();
+</span></span><span style="display:flex;"><span>        env.<span style="color:#50fa7b">put</span>(<span style="color:#f1fa8c">&#34;name&#34;</span>,<span style="color:#f1fa8c">&#34;zsad&#34;</span>);
+</span></span><span style="display:flex;"><span>        String execute2 <span style="color:#ff79c6">=</span> (String) AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34; &#39;hello&#39; + name&#34;</span>, env);
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(execute2);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//支持函数调用</span>
+</span></span><span style="display:flex;"><span>        Object execute3 <span style="color:#ff79c6">=</span> AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;string.length(&#39;hello&#39;)&#34;</span>);
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(execute3.<span style="color:#50fa7b">toString</span>());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//支持通过 lambda 关键字定义一个匿名函数，并且支持闭包捕获</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//lambda (参数1,参数2...) -&gt; 参数体表达式 end</span>
+</span></span><span style="display:flex;"><span>        env.<span style="color:#50fa7b">put</span>(<span style="color:#f1fa8c">&#34;x&#34;</span>,1);
+</span></span><span style="display:flex;"><span>        env.<span style="color:#50fa7b">put</span>(<span style="color:#f1fa8c">&#34;y&#34;</span>,10);
+</span></span><span style="display:flex;"><span>        Object execute4 <span style="color:#ff79c6">=</span> AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;(lambda (x,y) -&gt; x + y end)(x,y)&#34;</span>, env);
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(execute4.<span style="color:#50fa7b">toString</span>());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//支持自定义函数</span>
+</span></span><span style="display:flex;"><span>        AviatorEvaluator.<span style="color:#50fa7b">addFunction</span>(<span style="color:#ff79c6">new</span> AddFunction());
+</span></span><span style="display:flex;"><span>        AviatorEvaluator.<span style="color:#50fa7b">addFunction</span>(<span style="color:#ff79c6">new</span> GetFirstNonNullFunction());
+</span></span><span style="display:flex;"><span>        env.<span style="color:#50fa7b">put</span>(<span style="color:#f1fa8c">&#34;a&#34;</span>,12);
+</span></span><span style="display:flex;"><span>        env.<span style="color:#50fa7b">put</span>(<span style="color:#f1fa8c">&#34;v&#34;</span>,13);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//参数确定 自定义函数</span>
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;add(1,33)&#34;</span>).<span style="color:#50fa7b">toString</span>());
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//参数不确定自定义函数</span>
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;getFirstNonNull(a,v,bas,asf)&#34;</span>,env));
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//lambda表达式 自定义函数</span>
+</span></span><span style="display:flex;"><span>        AviatorEvaluator.<span style="color:#50fa7b">defineFunction</span>(<span style="color:#f1fa8c">&#34;sub&#34;</span>,<span style="color:#f1fa8c">&#34;lambda (a,b) -&gt; a - b end&#34;</span>);
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;sub(12,13)&#34;</span>).<span style="color:#50fa7b">toString</span>());
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//lambda表达式支持闭包 自定义函数  ? 按照官方写 会报错  存疑</span>
+</span></span><span style="display:flex;"><span>        AviatorEvaluator.<span style="color:#50fa7b">defineFunction</span>(<span style="color:#f1fa8c">&#34;sub2&#34;</span>,<span style="color:#f1fa8c">&#34;lambda (a) -&gt; lambda (b) -&gt; a - b end end&#34;</span>);
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;sub2(12)(14)&#34;</span>).<span style="color:#50fa7b">toString</span>());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">//参数确定 继承 AbstractFunction</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">AddFunction</span> <span style="color:#8be9fd;font-style:italic">extends</span> AbstractFunction {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        @Override
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">public</span> AviatorObject <span style="color:#50fa7b">call</span>(Map<span style="color:#ff79c6">&lt;</span>String, Object<span style="color:#ff79c6">&gt;</span> env, AviatorObject arg1, AviatorObject arg2) {
+</span></span><span style="display:flex;"><span>            Number left <span style="color:#ff79c6">=</span> FunctionUtils.<span style="color:#50fa7b">getNumberValue</span>(arg1, env);
+</span></span><span style="display:flex;"><span>            Number right <span style="color:#ff79c6">=</span> FunctionUtils.<span style="color:#50fa7b">getNumberValue</span>(arg2, env);
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">new</span> AviatorDouble(left.<span style="color:#50fa7b">doubleValue</span>() <span style="color:#ff79c6">+</span> right.<span style="color:#50fa7b">doubleValue</span>());
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">//函数名 add</span>
+</span></span><span style="display:flex;"><span>        @Override
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">public</span> String <span style="color:#50fa7b">getName</span>() {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">return</span> <span style="color:#f1fa8c">&#34;add&#34;</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">//参数不确定 继承 AbstractVariadicFunction</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">GetFirstNonNullFunction</span> <span style="color:#8be9fd;font-style:italic">extends</span> AbstractVariadicFunction {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        @Override
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">public</span> AviatorObject <span style="color:#50fa7b">variadicCall</span>(Map<span style="color:#ff79c6">&lt;</span>String, Object<span style="color:#ff79c6">&gt;</span> env, AviatorObject... args) {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">if</span> (args <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">null</span>) {
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">for</span> (AviatorObject arg : args) {
+</span></span><span style="display:flex;"><span>                    <span style="color:#ff79c6">if</span> (arg.<span style="color:#50fa7b">getValue</span>(env) <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">null</span>) {
+</span></span><span style="display:flex;"><span>                        <span style="color:#ff79c6">return</span> arg;
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">new</span> AviatorString(<span style="color:#ff79c6">null</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        @Override
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">public</span> String <span style="color:#50fa7b">getName</span>() {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">return</span> <span style="color:#f1fa8c">&#34;getFirstNonNull&#34;</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>运行结果</strong>
+
+  <img src="https://img-blog.csdnimg.cn/20210118160419292.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0NhcnJvdFpzeQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述">
+
+</p>
+<h2 id="4官方函数例子官方代码">4.官方函数例子(官方代码)</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#ff79c6">package</span> aviator.example;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> com.googlecode.aviator.AviatorEvaluator;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> java.util.ArrayList;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> java.util.Arrays;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> java.util.HashMap;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> java.util.Map;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> * @author zousy
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> * @version v1.0
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> * @Description
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> * @date 2021-01-18 15:59
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">FunctionExample</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd">void</span> <span style="color:#50fa7b">main</span>(String<span style="color:#ff79c6">[]</span> args) {
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;sysdate()&#34;</span>));
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;rand()&#34;</span>));
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;now()&#34;</span>));
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;date_to_string(sysdate(),&#39;yyyy-MM-dd&#39;)&#34;</span>));
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator
+</span></span><span style="display:flex;"><span>                .<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;string_to_date(date_to_string(sysdate(),&#39;yyyy-MM-dd&#39;),&#39;yyyy-MM-dd&#39;)&#34;</span>));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// string function</span>
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(<span style="color:#f1fa8c">&#34;test string function...&#34;</span>);
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;string.length(&#39;hello&#39;)&#34;</span>));
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;string.contains(&#39;hello&#39;,&#39;h&#39;)&#34;</span>));
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;string.startsWith(&#39;hello&#39;,&#39;h&#39;)&#34;</span>));
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;string.endsWith(&#39;hello&#39;,&#39;llo&#39;)&#34;</span>));
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(
+</span></span><span style="display:flex;"><span>                AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;string.contains(\&#34;test\&#34;,string.substring(&#39;hello&#39;,1,2))&#34;</span>));
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(Arrays
+</span></span><span style="display:flex;"><span>                .<span style="color:#50fa7b">toString</span>((String<span style="color:#ff79c6">[]</span>) AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;string.split(&#39;hello world,aviator&#39;,&#39; &#39;)&#34;</span>)));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// math function</span>
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(<span style="color:#f1fa8c">&#34;test math function...&#34;</span>);
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;math.abs(-3)&#34;</span>));
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;math.pow(-3,2)&#34;</span>));
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;math.sqrt(14.0)&#34;</span>));
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;math.log(100)&#34;</span>));
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;math.log10(1000)&#34;</span>));
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;math.sin(20)&#34;</span>));
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;math.cos(99.23)&#34;</span>));
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;math.tan(19.9)&#34;</span>));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// seq lib</span>
+</span></span><span style="display:flex;"><span>        Map<span style="color:#ff79c6">&lt;</span>String, Object<span style="color:#ff79c6">&gt;</span> env <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> HashMap<span style="color:#ff79c6">&lt;</span>String, Object<span style="color:#ff79c6">&gt;</span>();
+</span></span><span style="display:flex;"><span>        ArrayList<span style="color:#ff79c6">&lt;</span>Integer<span style="color:#ff79c6">&gt;</span> list <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> ArrayList<span style="color:#ff79c6">&lt;</span>Integer<span style="color:#ff79c6">&gt;</span>();
+</span></span><span style="display:flex;"><span>        list.<span style="color:#50fa7b">add</span>(3);
+</span></span><span style="display:flex;"><span>        list.<span style="color:#50fa7b">add</span>(100);
+</span></span><span style="display:flex;"><span>        list.<span style="color:#50fa7b">add</span>(<span style="color:#ff79c6">-</span>100);
+</span></span><span style="display:flex;"><span>        env.<span style="color:#50fa7b">put</span>(<span style="color:#f1fa8c">&#34;list&#34;</span>, list);
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;reduce(list,+,0)&#34;</span>, env));
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;filter(list,seq.exists())&#34;</span>, env));
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;count(list)&#34;</span>, env));
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;include(list,100)&#34;</span>, env));
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;sort(list)&#34;</span>, env));
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;map(list,println)&#34;</span>, env));
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(list);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>运行结果</strong></p>
+<p>
+  <img src="https://img-blog.csdnimg.cn/20210118160714133.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0NhcnJvdFpzeQ==,size_16,color_FFFFFF,t_70" alt="运行结果">
+
+</p>
+<h2 id="5支持大数据操作">5.支持大数据操作</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#ff79c6">package</span> aviator.example;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> com.googlecode.aviator.AviatorEvaluator;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> com.googlecode.aviator.Options;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> java.math.BigDecimal;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> java.math.BigInteger;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> java.math.MathContext;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> java.util.HashMap;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> java.util.Map;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> * @author zousy
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> * @version v1.0
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> * @Description
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> * @date 2021-01-18 16:10
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">BigNumberExample</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">//以大写字母N为后缀的整数都被认为是big int,如1N,2N,9999999999999999999999N等, 都是big int类型。</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">//超过long范围的整数字面量都将自动转换为big int类型。</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">//以大写字母M为后缀的数字都被认为是decimal, 如1M,2.222M, 100000.9999M等, 都是decimal类型。</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">//big int和decimal的运算,跟其他数字类型long,double没有什么区别,操作符仍然是一样的。</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// aviator重载了基本算术操作符来支持这两种新类型:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd">void</span> <span style="color:#50fa7b">main</span>(String<span style="color:#ff79c6">[]</span> args) {
+</span></span><span style="display:flex;"><span>        Object rt <span style="color:#ff79c6">=</span> AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;9223372036854775807100.356M * 2&#34;</span>);
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(rt <span style="color:#ff79c6">+</span> <span style="color:#f1fa8c">&#34;  &#34;</span> <span style="color:#ff79c6">+</span> rt.<span style="color:#50fa7b">getClass</span>());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        rt <span style="color:#ff79c6">=</span> AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;92233720368547758074+1000&#34;</span>);
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(rt <span style="color:#ff79c6">+</span> <span style="color:#f1fa8c">&#34;  &#34;</span> <span style="color:#ff79c6">+</span> rt.<span style="color:#50fa7b">getClass</span>());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        BigInteger a <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> BigInteger(String.<span style="color:#50fa7b">valueOf</span>(Long.<span style="color:#50fa7b">MAX_VALUE</span>) <span style="color:#ff79c6">+</span> String.<span style="color:#50fa7b">valueOf</span>(Long.<span style="color:#50fa7b">MAX_VALUE</span>));
+</span></span><span style="display:flex;"><span>        BigDecimal b <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> BigDecimal(<span style="color:#f1fa8c">&#34;3.2&#34;</span>);
+</span></span><span style="display:flex;"><span>        BigDecimal c <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> BigDecimal(<span style="color:#f1fa8c">&#34;9999.99999&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        Map<span style="color:#ff79c6">&lt;</span>String, Object<span style="color:#ff79c6">&gt;</span> env <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> HashMap<span style="color:#ff79c6">&lt;</span>String, Object<span style="color:#ff79c6">&gt;</span>();
+</span></span><span style="display:flex;"><span>        env.<span style="color:#50fa7b">put</span>(<span style="color:#f1fa8c">&#34;a&#34;</span>, a);
+</span></span><span style="display:flex;"><span>        env.<span style="color:#50fa7b">put</span>(<span style="color:#f1fa8c">&#34;b&#34;</span>, b);
+</span></span><span style="display:flex;"><span>        env.<span style="color:#50fa7b">put</span>(<span style="color:#f1fa8c">&#34;c&#34;</span>, c);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        rt <span style="color:#ff79c6">=</span> AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;a+10000000000000000000&#34;</span>, env);
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(rt <span style="color:#ff79c6">+</span> <span style="color:#f1fa8c">&#34;  &#34;</span> <span style="color:#ff79c6">+</span> rt.<span style="color:#50fa7b">getClass</span>());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        rt <span style="color:#ff79c6">=</span> AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;b+c*2&#34;</span>, env);
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(rt <span style="color:#ff79c6">+</span> <span style="color:#f1fa8c">&#34;  &#34;</span> <span style="color:#ff79c6">+</span> rt.<span style="color:#50fa7b">getClass</span>());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        rt <span style="color:#ff79c6">=</span> AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;a*b/c&#34;</span>, env);
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(rt <span style="color:#ff79c6">+</span> <span style="color:#f1fa8c">&#34;  &#34;</span> <span style="color:#ff79c6">+</span> rt.<span style="color:#50fa7b">getClass</span>());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// set math context</span>
+</span></span><span style="display:flex;"><span>        AviatorEvaluator.<span style="color:#50fa7b">setOption</span>(Options.<span style="color:#50fa7b">MATH_CONTEXT</span>, MathContext.<span style="color:#50fa7b">DECIMAL64</span>);
+</span></span><span style="display:flex;"><span>        rt <span style="color:#ff79c6">=</span> AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;a*b/c&#34;</span>, env);
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(rt <span style="color:#ff79c6">+</span> <span style="color:#f1fa8c">&#34;  &#34;</span> <span style="color:#ff79c6">+</span> rt.<span style="color:#50fa7b">getClass</span>());
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>运行结果</strong>
+
+  <img src="https://img-blog.csdnimg.cn/20210118163700982.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0NhcnJvdFpzeQ==,size_16,color_FFFFFF,t_70" alt="运行结果">
+
+</p>
+<h2 id="6正则表达式匹配">6.正则表达式匹配</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#ff79c6">package</span> aviator.example;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> com.googlecode.aviator.AviatorEvaluator;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> java.util.HashMap;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> java.util.Map;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> * @author zousy
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> * @version v1.0
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> * @Description
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> * @date 2021-01-18 16:40
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">RegularExpressionExample</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">//email与正则表达式/([\\w0-8]+@\\w+[\\.\\w+]+)/通过=~操作符来匹配,结果为一个 Boolean 类 型,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// 因此可以用于三元表达式判断,匹配成功的时候返回$1,指代正则表达式的分组 1,也就是用户名,否则返回unknown。</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">//Aviator 在表达式级别支持正则表达式,通过//括起来的字符序列构成一个正则表达式,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// 正则表达式可以用于匹配(作为=~的右操作数)、比较大小。但是匹配仅能与字符串进行匹配。</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// 匹配成功后, Aviator 会自动将匹配成功的捕获分组(capturing groups) 放入 env ${num}的变量中,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// 其中$0 指代整个匹配的字符串,而$1表示第一个分组，$2表示第二个分组以此类推。</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">//请注意，分组捕获放入 env 是默认开启的，因此如果传入的 env 不是线程安全并且被并发使用，可能存在线程安全的隐患。</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// 关闭分组匹配，可以通过 AviatorEvaluator.setOption(Options.PUT_CAPTURING_GROUPS_INTO_ENV, false);来关闭，对性能有稍许好处。</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">//Aviator 的正则表达式规则跟 Java 完全一样,因为内部其实就是使用java.util.regex.Pattern做编译的。</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd">void</span> <span style="color:#50fa7b">main</span>(<span style="color:#8be9fd;font-style:italic">final</span> String<span style="color:#ff79c6">[]</span> args) {
+</span></span><span style="display:flex;"><span>        String email <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;killme2008@gmail.com&#34;</span>;
+</span></span><span style="display:flex;"><span>        Map<span style="color:#ff79c6">&lt;</span>String, Object<span style="color:#ff79c6">&gt;</span> env <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> HashMap<span style="color:#ff79c6">&lt;&gt;</span>();
+</span></span><span style="display:flex;"><span>        env.<span style="color:#50fa7b">put</span>(<span style="color:#f1fa8c">&#34;email&#34;</span>, email);
+</span></span><span style="display:flex;"><span>        String username <span style="color:#ff79c6">=</span>
+</span></span><span style="display:flex;"><span>                (String) AviatorEvaluator.<span style="color:#50fa7b">execute</span>(<span style="color:#f1fa8c">&#34;email=~/([\\w0-8]+)@\\w+[\\.\\w+]+/ ? $1:&#39;unknow&#39;&#34;</span>, env);
+</span></span><span style="display:flex;"><span>        System.<span style="color:#50fa7b">out</span>.<span style="color:#50fa7b">println</span>(username);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>运行结果</strong>
+
+  <img src="https://img-blog.csdnimg.cn/20210118164657569.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0NhcnJvdFpzeQ==,size_16,color_FFFFFF,t_70" alt="运行结果">
+
+</p>
+
+
+                
+                
+<div class="entry-shang text-center">
+    
+	    <p>「真诚赞赏，手留余香」</p>
+	
+	<button class="zs show-zs btn btn-bred">赞赏支持</button>
+</div>
+<div class="zs-modal-bg"></div>
+<div class="zs-modal-box">
+	<div class="zs-modal-head">
+		<button type="button" class="close">×</button>
+		<span class="author"><a href="http://localhost:1313/"><img src="/img/favicon.png" />ShuYou&#39;s Blog</a></span>
+        
+	        <p class="tip"><i></i><span>真诚赞赏，手留余香</span></p>
+		
+ 
+	</div>
+	<div class="zs-modal-body">
+		<div class="zs-modal-btns">
+			<button class="btn btn-blink" data-num="2">2元</button>
+			<button class="btn btn-blink" data-num="5">5元</button>
+			<button class="btn btn-blink" data-num="10">10元</button>
+			<button class="btn btn-blink" data-num="50">50元</button>
+			<button class="btn btn-blink" data-num="100">100元</button>
+			<button class="btn btn-blink" data-num="1">任意金额</button>
+		</div>
+		<div class="zs-modal-pay">
+			<button class="btn btn-bred" id="pay-text">2元</button>
+			<p>使用<span id="pay-type">微信</span>扫描二维码完成支付</p>
+			<img src="/img/reward/wechat-2.png"  id="pay-image"/>
+		</div>
+	</div>
+	<div class="zs-modal-footer">
+		<label><input type="radio" name="zs-type" value="wechat" class="zs-type" checked="checked"><span ><span class="zs-wechat"><img src="/img/reward/wechat-btn.png"/></span></label>
+		<label><input type="radio" name="zs-type" value="alipay" class="zs-type" class="zs-alipay"><img src="/img/reward/alipay-btn.png"/></span></label>
+	</div>
+</div>
+<script type="text/javascript" src="/js/reward.js"></script>
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/spring/spring-aop/spring-aop%E4%BD%BF%E7%94%A8/" data-toggle="tooltip" data-placement="top" title="Spring AOP的初步使用">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/java-base/java%E9%9B%86%E5%90%88%E5%B0%8F%E7%BB%93/" data-toggle="tooltip" data-placement="top" title="Java集合小结">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+<script src="https://giscus.app/client.js"
+        data-repo="zoushuyou/zoushuyou.github.io"
+        data-repo-id="R_kgDOMG_H3g"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOMG_H3s4Cf_SS"
+        data-mapping="pathname"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-theme="light"
+        data-lang="en"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        <a href="/tags/algorithm" title="algorithm">
+                            algorithm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/blog" title="blog">
+                            blog
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java%E5%B9%B6%E5%8F%91" title="java并发">
+                            java并发
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/java%E9%9B%86%E5%90%88" title="java集合">
+                            java集合
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/mysql" title="mysql">
+                            mysql
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/redis" title="redis">
+                            redis
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring-boot" title="spring boot">
+                            spring boot
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring-cloud" title="spring cloud">
+                            spring cloud
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/tomcat" title="tomcat">
+                            tomcat
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E8%AE%B0%E5%BD%95" title="记录">
+                            记录
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/zoushuyou">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="ShuYou&#39;s Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; ShuYou&#39;s Blog 2024
+                    
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

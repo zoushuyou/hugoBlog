@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="ShuYou&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="http://localhost:1313//img/tag-bg.jpg">
+    <meta property="twitter:image" content="http://localhost:1313//img/tag-bg.jpg" />
+    
+
+    
+    <meta name="title" content="Spring Boot相关注解" />
+    <meta property="og:title" content="Spring Boot相关注解" />
+    <meta property="twitter:title" content="Spring Boot相关注解" />
+    
+
+    
+    <meta name="description" content="在路上">
+    <meta property="og:description" content="在路上" />
+    <meta property="twitter:description" content="在路上" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="zoushuyou, zoushuyou.github.io">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Spring Boot相关注解 | 书友的博客</title>
+
+    <link rel="canonical" href="/post/spring-boot/spring-boot%E7%9B%B8%E5%85%B3%E6%B3%A8%E8%A7%A3/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link rel="stylesheet" href="/css/font-awesome.all.min.css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    <script src="/js/lazysizes.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">ShuYou&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/code/">code</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/life/">life</a>
+                        </li>
+                        
+                    
+                    
+		            
+                        <li><a href="/archive//">ARCHIVE</a></li>
+                    
+                        <li><a href="/about//">ABOUT</a></li>
+                    
+		            <li class="search-icon">
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/tag-bg.jpg')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/spring-boot" title="Spring Boot">
+                            Spring Boot
+                        </a>
+                        
+                    </div>
+                    <h1>Spring Boot相关注解</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                shuyou
+                             
+                            on 
+                            Wednesday, September 1, 2021
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <blockquote>
+<p>本文介绍Spring Boot开发web相关注解知识</p>
+</blockquote>
+<h5 id="基础web注解">基础web注解</h5>
+<p><strong>Bean处理</strong></p>
+<ul>
+<li>@Component：通用的注解，可标注任意类为 Spring 组件。如果一个 Bean 不知道属于哪个层，可以使用@Component 注解标注；</li>
+<li>@Repository：对应持久层即 Dao 层，主要用于数据库相关操作；</li>
+<li>@Service：对应服务层，主要涉及一些复杂的逻辑，需要用到 Dao 层；</li>
+<li>@Controller：对应 Spring MVC 控制层，一般需要注入 Service 类返回结果数据；</li>
+<li>@RestController：继承于 @Controller，区别在于标注后整个类所有方法将直接返回 JSON 数据，不再需要视图解析处理，目前前后端分离的项目后端都是直接用这个注解的；</li>
+<li>@Configuration：标注是 Java 代码的配置类， Spring Boot 中推荐这种做法不再使用 xml 配置了；</li>
+<li>@Scope：声明 Spring Bean 的作用域,作用于一共有以下几种：
+<ul>
+<li>singleton：唯一 bean 实例，Spring 中的 bean 默认都是单例的。</li>
+<li>prototype：每次请求都会创建一个新的 bean 实例。</li>
+<li>request：每一次 HTTP 请求都会产生一个新的 bean，该 bean 仅在当前 HTTP request 内有效。</li>
+<li>session：每一次 HTTP 请求都会产生一个新的 bean，该 bean 仅在当前 HTTP session 内有效。</li>
+</ul>
+</li>
+</ul>
+<p><strong>HTTP请求</strong></p>
+<ul>
+<li>@RequestMapping：@RequestMapping(value=&quot;/test&quot;,method=RequestMethod.GET)可以指定路径和请求方法</li>
+<li>@GetMapping：get请求注解</li>
+<li>@PostMapping：post请求注解</li>
+<li>@PutMapping</li>
+<li>@DeleteMapping</li>
+</ul>
+<p><strong>前后端参数传递</strong></p>
+<ul>
+<li>@RequestParam：用在方法的参数前面，获取请求中表单类型的key=value格式的数据。</li>
+<li>@PathVariable：用于获取请求路径中的参数。</li>
+<li>@RequestBody：获取请求 body 中的数据，常用于搭配 @PostMapping 请求来提交对象数据.  请求体 的Content-Type 必须为 application/json 格式的数据，接收到数据之后会自动将数据绑定到 Java 对象上去。系统会使用 HttpMessageConverter 或者自定义的 HttpMessageConverter将请求的 body 中的 json 字符串转换为 java 对象。</li>
+<li>@ResponseBody：表示该方法的返回结果直接写入 HTTP response body 中，格式为 json。上面我们提到的 @RestController 其实就是 @Controller 和 @ResponseBody 两个结合起来的。</li>
+</ul>
+<p><strong>读取配置</strong></p>
+<ul>
+<li>@value：可以在任意 Spring 管理的 Bean 中通过这个注解获取任何来源配置的属性值。</li>
+<li>@ConfigurationProperties：指定该类是配置类，且可以指定配置前缀</li>
+<li>@PropertySource：定读取我们自定义的配置文件的。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>    @Component
+</span></span><span style="display:flex;"><span>    @ConfigurationProperties(prefix<span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;my&#34;</span> )
+</span></span><span style="display:flex;"><span>    @PropertySource(value <span style="color:#ff79c6">=</span> {<span style="color:#f1fa8c">&#34;classpath:my.properties&#34;</span>})
+</span></span><span style="display:flex;"><span>    @Data
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">MyProperties</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">private</span> <span style="color:#8be9fd">int</span> maxValue<span style="color:#ff79c6">=</span> 0;
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p><strong>参数校验</strong></p>
+<ul>
+<li>@NotEmpty 被注释的字符串的不能为 null 也不能为空</li>
+<li>@NotBlank 被注释的字符串非 null，并且必须包含一个非空白字符</li>
+<li>@Null 被注释的元素必须为 null</li>
+<li>@NotNull 被注释的元素必须不为 null</li>
+<li>@AssertTrue 被注释的元素必须为 true</li>
+<li>@AssertFalse 被注释的元素必须为 false</li>
+<li>@Pattern(regex=,flag=)被注释的元素必须符合指定的正则表达式</li>
+<li>@Email 被注释的元素必须是 Email 格式。</li>
+<li>@Min(value)被注释的元素必须是一个数字，其值必须大于等于指定的最小值</li>
+<li>@Max(value)被注释的元素必须是一个数字，其值必须小于等于指定的最大值</li>
+<li>@DecimalMin(value)被注释的元素必须是一个数字，其值必须大于等于指定的最小值</li>
+<li>@DecimalMax(value) 被注释的元素必须是一个数字，其值必须小于等于指定的最大值</li>
+<li>@Size(max=, min=)被注释的元素的大小必须在指定的范围内</li>
+<li>@Digits (integer, fraction)被注释的元素必须是一个数字，其值必须在可接受的范围内</li>
+<li>@Past被注释的元素必须是一个过去的日期</li>
+<li>@Future 被注释的元素必须是一个将来的日期</li>
+</ul>
+<p>只需要在请求处理方法中需要验证的参数前加上 @Valid 注解就会开启校验了，如果验证失败将抛出异常：MethodArgumentNotValidException。</p>
+<ul>
+<li>@Validated：如果你的入参不是用一个 Java 对象来接收的话，比如用 @PathVariables 和 @RequestParam 注解来获取入参，这种情况下要校验参数不要忘记在类的头上加 @Validated 注解，这个参数可以告诉 Spring 去校验方法参数。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>    @RestController
+</span></span><span style="display:flex;"><span>    @RequestMapping(<span style="color:#f1fa8c">&#34;/user&#34;</span>)
+</span></span><span style="display:flex;"><span>    @Validated
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">UserController</span> {
+</span></span><span style="display:flex;"><span>    @GetMapping(<span style="color:#f1fa8c">&#34;/{id}&#34;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">public</span> ResponseEntity<span style="color:#ff79c6">&lt;</span>List<span style="color:#ff79c6">&lt;</span>User<span style="color:#ff79c6">&gt;&gt;</span> <span style="color:#50fa7b">findById</span>( @PathVariable @Max(value <span style="color:#ff79c6">=</span> 5,message <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;超过 id 的范围了&#34;</span>) <span style="color:#8be9fd">long</span> id) {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">new</span> ResponseEntity(userService.<span style="color:#50fa7b">findById</span>(id),HttpStatus.<span style="color:#50fa7b">OK</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p><strong>统一异常处理</strong></p>
+<ul>
+<li>@ControllerAdvice：定义全局异常处理类，包含 @Component 所以可以被 Spring 扫描到。</li>
+<li>@ExceptionHandler : 声明异常处理方法，表示遇到这个异常，就执行标注的方法。</li>
+</ul>
+<p><strong>配置启动</strong></p>
+<ul>
+<li>@SpringBootApplication：等价于使用 @Configuration、@EnableAutoConfiguration、@ComponentScan  三个注解。</li>
+<li>@Configuration：声明是是一个 Java 形式的配置类，Spring Boot 提倡基于 Java 的配置，相当于你之前在 xml 中配置 bean；</li>
+<li>@EnableConfigurationProperties： 指定配置类，并使配置类生效</li>
+<li>@ComponentScan：标注哪些路径下的类需要被Spring扫描。</li>
+<li>@Conditional：Spring4 新提供的注解，通过 @Conditional 注解可以根据代码中设置的条件装载不同的 bean，也是SpringBoot实现自动配置的基石。</li>
+</ul>
+
+
+                
+                
+<div class="entry-shang text-center">
+    
+	    <p>「真诚赞赏，手留余香」</p>
+	
+	<button class="zs show-zs btn btn-bred">赞赏支持</button>
+</div>
+<div class="zs-modal-bg"></div>
+<div class="zs-modal-box">
+	<div class="zs-modal-head">
+		<button type="button" class="close">×</button>
+		<span class="author"><a href="http://localhost:1313/"><img src="/img/favicon.png" />ShuYou&#39;s Blog</a></span>
+        
+	        <p class="tip"><i></i><span>真诚赞赏，手留余香</span></p>
+		
+ 
+	</div>
+	<div class="zs-modal-body">
+		<div class="zs-modal-btns">
+			<button class="btn btn-blink" data-num="2">2元</button>
+			<button class="btn btn-blink" data-num="5">5元</button>
+			<button class="btn btn-blink" data-num="10">10元</button>
+			<button class="btn btn-blink" data-num="50">50元</button>
+			<button class="btn btn-blink" data-num="100">100元</button>
+			<button class="btn btn-blink" data-num="1">任意金额</button>
+		</div>
+		<div class="zs-modal-pay">
+			<button class="btn btn-bred" id="pay-text">2元</button>
+			<p>使用<span id="pay-type">微信</span>扫描二维码完成支付</p>
+			<img src="/img/reward/wechat-2.png"  id="pay-image"/>
+		</div>
+	</div>
+	<div class="zs-modal-footer">
+		<label><input type="radio" name="zs-type" value="wechat" class="zs-type" checked="checked"><span ><span class="zs-wechat"><img src="/img/reward/wechat-btn.png"/></span></label>
+		<label><input type="radio" name="zs-type" value="alipay" class="zs-type" class="zs-alipay"><img src="/img/reward/alipay-btn.png"/></span></label>
+	</div>
+</div>
+<script type="text/javascript" src="/js/reward.js"></script>
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/spring-boot/spring-boot%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE/" data-toggle="tooltip" data-placement="top" title="Spring Boot自动配置相关知识">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/spring-boot/spring-boot%E4%B8%AD%E7%9A%84json/" data-toggle="tooltip" data-placement="top" title="Spring Boot中操作JSON">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+<script src="https://giscus.app/client.js"
+        data-repo="zoushuyou/zoushuyou.github.io"
+        data-repo-id="R_kgDOMG_H3g"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOMG_H3s4Cf_SS"
+        data-mapping="pathname"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-theme="light"
+        data-lang="en"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        <a href="/tags/algorithm" title="algorithm">
+                            algorithm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/blog" title="blog">
+                            blog
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java%E5%B9%B6%E5%8F%91" title="java并发">
+                            java并发
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/java%E9%9B%86%E5%90%88" title="java集合">
+                            java集合
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/mysql" title="mysql">
+                            mysql
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/redis" title="redis">
+                            redis
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring-boot" title="spring boot">
+                            spring boot
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring-cloud" title="spring cloud">
+                            spring cloud
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/tomcat" title="tomcat">
+                            tomcat
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E8%AE%B0%E5%BD%95" title="记录">
+                            记录
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/zoushuyou">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="ShuYou&#39;s Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; ShuYou&#39;s Blog 2024
+                    
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

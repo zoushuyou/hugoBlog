@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="ShuYou&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="http://localhost:1313//img/tag-bg.jpg">
+    <meta property="twitter:image" content="http://localhost:1313//img/tag-bg.jpg" />
+    
+
+    
+    <meta name="title" content="Eureka服务注册与发现" />
+    <meta property="og:title" content="Eureka服务注册与发现" />
+    <meta property="twitter:title" content="Eureka服务注册与发现" />
+    
+
+    
+    <meta name="description" content="在路上">
+    <meta property="og:description" content="在路上" />
+    <meta property="twitter:description" content="在路上" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="zoushuyou, zoushuyou.github.io">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Eureka服务注册与发现 | 书友的博客</title>
+
+    <link rel="canonical" href="/post/spring-cloud/eureka%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E4%B8%8E%E5%8F%91%E7%8E%B0/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link rel="stylesheet" href="/css/font-awesome.all.min.css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    <script src="/js/lazysizes.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">ShuYou&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/code/">code</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/life/">life</a>
+                        </li>
+                        
+                    
+                    
+		            
+                        <li><a href="/archive//">ARCHIVE</a></li>
+                    
+                        <li><a href="/about//">ABOUT</a></li>
+                    
+		            <li class="search-icon">
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/tag-bg.jpg')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/spring-cloud" title="Spring Cloud">
+                            Spring Cloud
+                        </a>
+                        
+                    </div>
+                    <h1>Eureka服务注册与发现</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                shuyou
+                             
+                            on 
+                            Monday, October 11, 2021
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <blockquote>
+<p>本文介绍Eureka相关知识</p>
+</blockquote>
+<h1 id="简介">简介</h1>
+<p>Eureka是由netflix开发的一款服务治理的框架，Sping Cloud对其进行了集成。</p>
+<p>Eureka既包括客户端也包括服务端。Eureka客户端是服务提供者，它将自己注册到Eureka服务端，并周期性地发送心跳包来更新它的服务租约，同时也能从服务端查询当前注册的服务信息并把它们缓存到本地并周期性地刷新服务状态；Eureka服务端是一个服务注册中心，提供服务的注册和发现，即当前有哪些服务注册进来可供使用。</p>
+<p>
+  <img src="https://img-blog.csdnimg.cn/9134b450a8d94833b3b7972c82a50eff.png?,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5bCP6Iiffg==,size_20,color_FFFFFF,t_70,g_se,x_16" alt="Eureka架构">
+
+</p>
+<h2 id="服务注册中心">服务注册中心</h2>
+<p>1.在pom.xml文件中引入 eureka-server</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>        <span style="color:#ff79c6">&lt;!--</span>eureka<span style="color:#ff79c6">-</span>server<span style="color:#ff79c6">--&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">&lt;</span>dependency<span style="color:#ff79c6">&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">&lt;</span>groupId<span style="color:#ff79c6">&gt;</span>org.<span style="color:#50fa7b">springframework</span>.<span style="color:#50fa7b">cloud</span><span style="color:#ff79c6">&lt;/</span>groupId<span style="color:#ff79c6">&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">&lt;</span>artifactId<span style="color:#ff79c6">&gt;</span>spring<span style="color:#ff79c6">-</span>cloud<span style="color:#ff79c6">-</span>starter<span style="color:#ff79c6">-</span>netflix<span style="color:#ff79c6">-</span>eureka<span style="color:#ff79c6">-</span>server<span style="color:#ff79c6">&lt;/</span>artifactId<span style="color:#ff79c6">&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">&lt;/</span>dependency<span style="color:#ff79c6">&gt;</span>
+</span></span></code></pre></div><p>2.在启动类中加上注解 <strong>@EnableEurekaServer</strong>
+3.在 application.yml 添加以下配置，作为服务注册中心时禁止默认的自我注册：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ff79c6">eureka</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">instance</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">hostname</span>: eureka7001.com <span style="color:#6272a4">#eureka服务端实例名称</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">client</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">register-with-eureka</span>: <span style="color:#ff79c6">false</span> <span style="color:#6272a4">#表示不向注册中心注册自己</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">fetch-registry</span>: <span style="color:#ff79c6">false</span> <span style="color:#6272a4">#false表示自己就是注册中心</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">service-url</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#ff79c6">defaultZone</span>: http://eureka7001.com:7001/eureka/
+</span></span></code></pre></div><h2 id="服务提供者">服务提供者</h2>
+<p>1.在pom.xml文件中引入 eureka-client</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>        <span style="color:#ff79c6">&lt;</span>dependency<span style="color:#ff79c6">&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">&lt;</span>groupId<span style="color:#ff79c6">&gt;</span>org.<span style="color:#50fa7b">springframework</span>.<span style="color:#50fa7b">cloud</span><span style="color:#ff79c6">&lt;/</span>groupId<span style="color:#ff79c6">&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">&lt;</span>artifactId<span style="color:#ff79c6">&gt;</span>spring<span style="color:#ff79c6">-</span>cloud<span style="color:#ff79c6">-</span>starter<span style="color:#ff79c6">-</span>netflix<span style="color:#ff79c6">-</span>eureka<span style="color:#ff79c6">-</span>client<span style="color:#ff79c6">&lt;/</span>artifactId<span style="color:#ff79c6">&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">&lt;/</span>dependency<span style="color:#ff79c6">&gt;</span>
+</span></span></code></pre></div><p>2.在启动类中加上注解 <strong>@EnableDiscoveryClient</strong>
+3.在 application.yml 添加以下配置：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ff79c6">eureka</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">client</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">register-with-eureka</span>: <span style="color:#ff79c6">true</span> <span style="color:#6272a4">#表示向注册中心注册自己</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">fetch-registry</span>: <span style="color:#ff79c6">true</span> <span style="color:#6272a4">#是否从EurekaServer抓取已有的注册信息，默认为true，单节点无所谓,集群必须设置为true才能配合ribbon使用负载均衡</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">service-url</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#ff79c6">defaultZone</span>: http://eureka7001.com:7001/eureka/,http://eureka7002.com:7002/eureka/
+</span></span></code></pre></div><h2 id="eureka-server集群">Eureka-Server集群</h2>
+<p>Eureka服务端充当了重要的角色，所有Eureka客户端都将自己提供的服务注册到Eureka服务端，然后供所有服务消费者使用。如果单节点的Eureka服务端宕机了，那么所有服务都无法正常的访问，这必将是灾难性的。为了提高Eureka服务端的可用性，我们一般会对其集群部署，即同时部署多个Eureka服务端，并且可以相互间同步服务。</p>
+<p>eureka-server1:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ff79c6">server</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">port</span>: <span style="color:#bd93f9">7001</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">eureka</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">instance</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">hostname</span>: eureka7001.com <span style="color:#6272a4">#eureka服务端实例名称</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">client</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">register-with-eureka</span>: <span style="color:#ff79c6">false</span> <span style="color:#6272a4">#表示不向注册中心注册自己</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">fetch-registry</span>: <span style="color:#ff79c6">false</span> <span style="color:#6272a4">#false表示自己就是组测中心</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">service-url</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#ff79c6">defaultZone</span>: http://eureka7002.com:7002/eureka/
+</span></span></code></pre></div><p>eureka-server2:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ff79c6">server</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">port</span>: <span style="color:#bd93f9">7002</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">eureka</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">instance</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">hostname</span>: eureka7001.com <span style="color:#6272a4">#eureka服务端实例名称</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">client</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">register-with-eureka</span>: <span style="color:#ff79c6">false</span> <span style="color:#6272a4">#表示不向注册中心注册自己</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">fetch-registry</span>: <span style="color:#ff79c6">false</span> <span style="color:#6272a4">#false表示自己就是组测中心</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">service-url</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#ff79c6">defaultZone</span>: http://eureka7001.com:7001/eureka/
+</span></span></code></pre></div><p>通过指定 defaultZone 为其他 server 地址进行集群。</p>
+<p><strong>参考</strong></p>
+<ol>
+<li><a href="https://mrbird.cc/Spring-Cloud-Eureka.html">Spring Cloud Eureka服务治理</a></li>
+<li><a href="http://cloud.spring.io/spring-cloud-netflix/1.4.x/multi/multi__service_discovery_eureka_clients.html">Eureka</a></li>
+</ol>
+
+
+                
+                
+<div class="entry-shang text-center">
+    
+	    <p>「真诚赞赏，手留余香」</p>
+	
+	<button class="zs show-zs btn btn-bred">赞赏支持</button>
+</div>
+<div class="zs-modal-bg"></div>
+<div class="zs-modal-box">
+	<div class="zs-modal-head">
+		<button type="button" class="close">×</button>
+		<span class="author"><a href="http://localhost:1313/"><img src="/img/favicon.png" />ShuYou&#39;s Blog</a></span>
+        
+	        <p class="tip"><i></i><span>真诚赞赏，手留余香</span></p>
+		
+ 
+	</div>
+	<div class="zs-modal-body">
+		<div class="zs-modal-btns">
+			<button class="btn btn-blink" data-num="2">2元</button>
+			<button class="btn btn-blink" data-num="5">5元</button>
+			<button class="btn btn-blink" data-num="10">10元</button>
+			<button class="btn btn-blink" data-num="50">50元</button>
+			<button class="btn btn-blink" data-num="100">100元</button>
+			<button class="btn btn-blink" data-num="1">任意金额</button>
+		</div>
+		<div class="zs-modal-pay">
+			<button class="btn btn-bred" id="pay-text">2元</button>
+			<p>使用<span id="pay-type">微信</span>扫描二维码完成支付</p>
+			<img src="/img/reward/wechat-2.png"  id="pay-image"/>
+		</div>
+	</div>
+	<div class="zs-modal-footer">
+		<label><input type="radio" name="zs-type" value="wechat" class="zs-type" checked="checked"><span ><span class="zs-wechat"><img src="/img/reward/wechat-btn.png"/></span></label>
+		<label><input type="radio" name="zs-type" value="alipay" class="zs-type" class="zs-alipay"><img src="/img/reward/alipay-btn.png"/></span></label>
+	</div>
+</div>
+<script type="text/javascript" src="/js/reward.js"></script>
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/shuyou/%E5%A4%8D%E5%8E%9F%E7%9A%84%E5%8D%81%E6%9C%88/" data-toggle="tooltip" data-placement="top" title="十月杂感">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/spring-cloud/nacos%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E4%B8%8E%E5%8F%91%E7%8E%B0/" data-toggle="tooltip" data-placement="top" title="Nacos服务注册与发现">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+<script src="https://giscus.app/client.js"
+        data-repo="zoushuyou/zoushuyou.github.io"
+        data-repo-id="R_kgDOMG_H3g"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOMG_H3s4Cf_SS"
+        data-mapping="pathname"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-theme="light"
+        data-lang="en"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        <a href="/tags/algorithm" title="algorithm">
+                            algorithm
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/blog" title="blog">
+                            blog
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java%E5%B9%B6%E5%8F%91" title="java并发">
+                            java并发
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/java%E9%9B%86%E5%90%88" title="java集合">
+                            java集合
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/jvm" title="jvm">
+                            jvm
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/mysql" title="mysql">
+                            mysql
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/redis" title="redis">
+                            redis
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring" title="spring">
+                            spring
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring-boot" title="spring boot">
+                            spring boot
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/spring-cloud" title="spring cloud">
+                            spring cloud
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/tomcat" title="tomcat">
+                            tomcat
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E8%AE%B0%E5%BD%95" title="记录">
+                            记录
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/zoushuyou">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="ShuYou&#39;s Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; ShuYou&#39;s Blog 2024
+                    
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>
